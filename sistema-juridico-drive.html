@@ -1,0 +1,1409 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>LexOffice — Sistema Jurídico | OAB/RJ 146756</title>
+<script src="https://accounts.google.com/gsi/client" async defer></script>
+<style>
+/* ─── Reset & Base ─── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+:root {
+  --bg: #ffffff;
+  --bg2: #f7f7f5;
+  --bg3: #f0f0ec;
+  --text: #1a1a18;
+  --text2: #5a5a56;
+  --text3: #9a9a94;
+  --border: rgba(0,0,0,0.09);
+  --border2: rgba(0,0,0,0.16);
+  --accent: #1a5fa8;
+  --accent-light: #e6f0fb;
+  --accent-dark: #0d3f74;
+  --red: #c23b3b;
+  --red-light: #fceaea;
+  --amber: #c27a0a;
+  --amber-light: #fdf3dc;
+  --green: #2d7a3a;
+  --green-light: #e8f5eb;
+  --purple: #5a3a9e;
+  --purple-light: #f0ebff;
+  --shadow: 0 1px 3px rgba(0,0,0,0.07), 0 1px 8px rgba(0,0,0,0.04);
+  --radius: 8px;
+  --radius-lg: 12px;
+  font-size: 14px;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #1c1c1a; --bg2: #242422; --bg3: #2a2a28;
+    --text: #f0f0ec; --text2: #a0a09a; --text3: #666662;
+    --border: rgba(255,255,255,0.08); --border2: rgba(255,255,255,0.14);
+    --accent: #4a8fd4; --accent-light: #0d2540; --accent-dark: #6aaee8;
+    --red: #e06060; --red-light: #2a1515;
+    --amber: #e0a030; --amber-light: #2a2010;
+    --green: #50c060; --green-light: #102215;
+    --purple: #9a7ae0; --purple-light: #1a1230;
+  }
+}
+html, body { height: 100%; overflow: hidden; }
+body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif; background: var(--bg3); color: var(--text); line-height: 1.5; }
+button { font-family: inherit; cursor: pointer; }
+input, select, textarea { font-family: inherit; }
+a { color: var(--accent); text-decoration: none; }
+
+/* ─── Layout ─── */
+.app { display: flex; height: 100vh; }
+.sidebar { width: 230px; min-width: 230px; background: var(--bg); border-right: 1px solid var(--border); display: flex; flex-direction: column; overflow-y: auto; }
+.main { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-width: 0; }
+.topbar { height: 54px; background: var(--bg); border-bottom: 1px solid var(--border); display: flex; align-items: center; padding: 0 20px; gap: 12px; flex-shrink: 0; }
+.content { flex: 1; overflow-y: auto; padding: 20px; }
+
+/* ─── Sidebar ─── */
+.sidebar-logo { padding: 18px 18px 14px; border-bottom: 1px solid var(--border); }
+.sidebar-logo .logo-mark { font-size: 20px; margin-bottom: 2px; }
+.sidebar-logo h1 { font-size: 15px; font-weight: 600; color: var(--text); letter-spacing: -0.02em; }
+.sidebar-logo p { font-size: 11px; color: var(--text3); margin-top: 1px; }
+.nav-section { padding: 10px 0 4px; }
+.nav-label { font-size: 10px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .06em; padding: 4px 18px 6px; }
+.nav-item { display: flex; align-items: center; gap: 10px; padding: 8px 18px; cursor: pointer; color: var(--text2); font-size: 13px; transition: all .12s; border-left: 2px solid transparent; user-select: none; }
+.nav-item svg { width: 16px; height: 16px; flex-shrink: 0; opacity: .7; }
+.nav-item:hover { background: var(--bg2); color: var(--text); }
+.nav-item.active { background: var(--accent-light); color: var(--accent); border-left-color: var(--accent); font-weight: 500; }
+.nav-item.active svg { opacity: 1; }
+.nav-badge { margin-left: auto; background: var(--red); color: #fff; font-size: 10px; font-weight: 600; padding: 1px 6px; border-radius: 99px; }
+.sidebar-footer { margin-top: auto; padding: 14px 18px; border-top: 1px solid var(--border); font-size: 11px; color: var(--text3); line-height: 1.6; }
+.sidebar-footer strong { color: var(--text2); display: block; font-size: 12px; }
+
+/* ─── Topbar ─── */
+.topbar-title { font-size: 15px; font-weight: 600; flex: 1; letter-spacing: -0.01em; }
+.topbar-actions { display: flex; gap: 8px; align-items: center; }
+
+/* ─── Buttons ─── */
+.btn { padding: 6px 14px; border-radius: var(--radius); border: 1px solid var(--border2); background: var(--bg); color: var(--text); cursor: pointer; font-size: 13px; display: inline-flex; align-items: center; gap: 6px; transition: all .12s; font-weight: 500; white-space: nowrap; }
+.btn:hover { background: var(--bg2); border-color: var(--border2); }
+.btn:active { transform: scale(.98); }
+.btn-primary { background: var(--accent); color: #fff; border-color: var(--accent); }
+.btn-primary:hover { background: var(--accent-dark); border-color: var(--accent-dark); }
+.btn-sm { padding: 4px 10px; font-size: 12px; }
+.btn-danger { background: var(--red-light); color: var(--red); border-color: transparent; }
+.btn-danger:hover { background: var(--red); color: #fff; }
+.btn-success { background: var(--green-light); color: var(--green); border-color: transparent; }
+.btn-success:hover { background: var(--green); color: #fff; }
+.btn-ghost { background: transparent; border-color: transparent; color: var(--text2); }
+.btn-ghost:hover { background: var(--bg2); color: var(--text); border-color: transparent; }
+.btn-icon { padding: 5px; width: 28px; height: 28px; justify-content: center; border-color: transparent; background: transparent; }
+.btn-icon:hover { background: var(--bg2); }
+
+/* ─── Cards & Metrics ─── */
+.card { background: var(--bg); border: 1px solid var(--border); border-radius: var(--radius-lg); padding: 16px; }
+.metric-card { background: var(--bg2); border-radius: var(--radius); padding: 14px 16px; }
+.metric-label { font-size: 11px; color: var(--text3); margin-bottom: 4px; text-transform: uppercase; letter-spacing: .05em; font-weight: 500; }
+.metric-value { font-size: 26px; font-weight: 600; color: var(--text); letter-spacing: -0.02em; line-height: 1; }
+.metric-sub { font-size: 11px; color: var(--text3); margin-top: 4px; }
+
+/* ─── Grids ─── */
+.grid-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px; }
+@media (max-width: 900px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: 1fr 1fr; }
+  .grid-2 { grid-template-columns: 1fr; }
+}
+
+/* ─── Tables ─── */
+.table-wrap { overflow-x: auto; }
+table { width: 100%; border-collapse: collapse; font-size: 13px; }
+thead th { text-align: left; padding: 9px 14px; font-size: 11px; font-weight: 600; color: var(--text3); border-bottom: 1px solid var(--border); background: var(--bg2); text-transform: uppercase; letter-spacing: .05em; white-space: nowrap; }
+tbody td { padding: 10px 14px; border-bottom: 1px solid var(--border); color: var(--text); vertical-align: middle; }
+tbody tr:last-child td { border-bottom: none; }
+tbody tr:hover td { background: var(--bg2); }
+
+/* ─── Badges ─── */
+.badge { display: inline-flex; align-items: center; padding: 2px 8px; border-radius: 99px; font-size: 11px; font-weight: 600; white-space: nowrap; }
+.badge-blue { background: var(--accent-light); color: var(--accent); }
+.badge-green { background: var(--green-light); color: var(--green); }
+.badge-amber { background: var(--amber-light); color: var(--amber); }
+.badge-red { background: var(--red-light); color: var(--red); }
+.badge-gray { background: var(--bg3); color: var(--text2); }
+.badge-purple { background: var(--purple-light); color: var(--purple); }
+
+/* ─── Forms ─── */
+.form-group { margin-bottom: 14px; }
+.form-label { display: block; font-size: 12px; font-weight: 600; color: var(--text2); margin-bottom: 5px; }
+.form-control { width: 100%; padding: 8px 10px; border: 1px solid var(--border2); border-radius: var(--radius); background: var(--bg); color: var(--text); font-size: 13px; transition: border-color .12s; }
+.form-control:focus { outline: none; border-color: var(--accent); box-shadow: 0 0 0 3px rgba(26,95,168,.1); }
+textarea.form-control { resize: vertical; min-height: 70px; }
+select.form-control { appearance: auto; }
+.form-row { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+.form-row-3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 12px; }
+.form-hint { font-size: 11px; color: var(--text3); margin-top: 4px; }
+
+/* ─── Modal ─── */
+.modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center; z-index: 200; padding: 16px; animation: fadein .15s; }
+@keyframes fadein { from { opacity: 0; } to { opacity: 1; } }
+.modal { background: var(--bg); border-radius: var(--radius-lg); border: 1px solid var(--border2); width: 100%; max-width: 640px; max-height: 88vh; overflow-y: auto; box-shadow: 0 20px 60px rgba(0,0,0,.2); animation: slidein .15s; }
+@keyframes slidein { from { transform: translateY(-12px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+.modal-lg { max-width: 800px; }
+.modal-header { padding: 16px 20px; border-bottom: 1px solid var(--border); display: flex; align-items: center; justify-content: space-between; position: sticky; top: 0; background: var(--bg); z-index: 1; }
+.modal-header h3 { font-size: 15px; font-weight: 600; }
+.modal-body { padding: 20px; }
+.modal-footer { padding: 14px 20px; border-top: 1px solid var(--border); display: flex; justify-content: flex-end; gap: 8px; background: var(--bg2); border-radius: 0 0 var(--radius-lg) var(--radius-lg); }
+
+/* ─── Inline elements ─── */
+.section-title { font-size: 13px; font-weight: 600; margin-bottom: 14px; color: var(--text); display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.divider { height: 1px; background: var(--border); margin: 16px 0; }
+.mono { font-family: 'SF Mono', 'Fira Code', monospace; font-size: 11px; color: var(--text2); }
+.truncate { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.text-muted { color: var(--text2); }
+.text-sm { font-size: 12px; }
+.text-xs { font-size: 11px; }
+.gap-4 { display: flex; gap: 4px; }
+.gap-8 { display: flex; gap: 8px; align-items: center; }
+.mb-12 { margin-bottom: 12px; }
+.mb-16 { margin-bottom: 16px; }
+.mb-20 { margin-bottom: 20px; }
+
+/* ─── List items ─── */
+.list-item { display: flex; align-items: flex-start; gap: 10px; padding: 10px 0; border-bottom: 1px solid var(--border); }
+.list-item:last-child { border-bottom: none; }
+.list-item-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; margin-top: 5px; }
+.dot-red { background: var(--red); }
+.dot-amber { background: var(--amber); }
+.dot-green { background: var(--green); }
+.dot-blue { background: var(--accent); }
+.dot-gray { background: var(--text3); }
+
+/* ─── Financial ─── */
+.fin-pos { color: var(--green); font-weight: 600; }
+.fin-neg { color: var(--red); font-weight: 600; }
+
+/* ─── Calendar ─── */
+.cal-wrap { display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px; }
+.cal-header { text-align: center; font-size: 11px; font-weight: 600; color: var(--text3); padding: 6px 2px; text-transform: uppercase; letter-spacing: .04em; }
+.cal-cell { min-height: 72px; padding: 5px; border: 1px solid var(--border); border-radius: 6px; font-size: 11px; cursor: pointer; transition: background .1s; position: relative; }
+.cal-cell:hover { background: var(--bg2); }
+.cal-cell.today { border-color: var(--accent); background: var(--accent-light); }
+.cal-cell.other { opacity: .35; pointer-events: none; }
+.cal-day-num { font-weight: 600; font-size: 12px; margin-bottom: 3px; color: var(--text); }
+.cal-evt { font-size: 10px; padding: 1px 4px; border-radius: 3px; margin-bottom: 2px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.cal-evt-agenda { background: var(--accent); color: #fff; }
+.cal-evt-prazo { background: var(--red); color: #fff; }
+.cal-evt-task { background: var(--amber); color: #fff; }
+
+/* ─── Progress ─── */
+.progress-bar { height: 5px; background: var(--bg3); border-radius: 3px; overflow: hidden; margin-top: 6px; }
+.progress-fill { height: 100%; background: var(--accent); border-radius: 3px; }
+
+/* ─── Alert ─── */
+.alert { padding: 10px 14px; border-radius: var(--radius); font-size: 13px; margin-bottom: 14px; display: flex; align-items: flex-start; gap: 8px; }
+.alert-warn { background: var(--amber-light); color: var(--amber); border: 1px solid rgba(194,122,10,.2); }
+.alert-danger { background: var(--red-light); color: var(--red); border: 1px solid rgba(194,59,59,.2); }
+.alert-info { background: var(--accent-light); color: var(--accent); border: 1px solid rgba(26,95,168,.2); }
+
+/* ─── Avatar ─── */
+.avatar { border-radius: 50%; background: var(--accent-light); color: var(--accent); font-weight: 600; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+
+/* ─── Tabs ─── */
+.tabs { display: flex; border-bottom: 1px solid var(--border); margin-bottom: 16px; gap: 0; }
+.tab { padding: 8px 16px; cursor: pointer; font-size: 13px; color: var(--text2); border-bottom: 2px solid transparent; margin-bottom: -1px; transition: all .12s; font-weight: 500; }
+.tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+.tab:hover { color: var(--text); }
+
+/* ─── Search ─── */
+.search-wrap { position: relative; }
+.search-wrap svg { position: absolute; left: 9px; top: 50%; transform: translateY(-50%); width: 15px; height: 15px; color: var(--text3); pointer-events: none; }
+.search-wrap input { padding-left: 30px; }
+
+/* ─── Empty state ─── */
+.empty { text-align: center; padding: 48px 20px; color: var(--text3); }
+.empty svg { width: 40px; height: 40px; margin: 0 auto 12px; display: block; opacity: .4; }
+.empty p { font-size: 13px; }
+
+/* ─── Tooltip ─── */
+[title] { cursor: help; }
+
+/* ─── Scrollbar ─── */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 3px; }
+
+/* ─── Print ─── */
+@media print {
+  .sidebar, .topbar, .topbar-actions, .btn, .btn-icon, .action-row { display: none !important; }
+  .main { display: block; }
+  .content { overflow: visible; }
+}
+
+/* ─── Responsive sidebar ─── */
+@media (max-width: 768px) {
+  .sidebar { width: 0; min-width: 0; overflow: hidden; }
+  .sidebar.open { width: 230px; min-width: 230px; position: fixed; z-index: 100; height: 100%; box-shadow: 4px 0 20px rgba(0,0,0,.2); }
+}
+.action-row { display: flex; gap: 4px; align-items: center; }
+
+/* ─── Pill filter ─── */
+.filter-pills { display: flex; gap: 6px; flex-wrap: wrap; margin-bottom: 14px; }
+.pill { padding: 4px 12px; border-radius: 99px; border: 1px solid var(--border2); background: var(--bg); color: var(--text2); font-size: 12px; cursor: pointer; transition: all .12s; font-weight: 500; }
+.pill:hover { background: var(--bg2); }
+.pill.active { background: var(--accent); color: #fff; border-color: var(--accent); }
+
+/* ─── Tag ─── */
+.tag { display: inline-block; padding: 2px 8px; background: var(--bg3); color: var(--text2); border-radius: 4px; font-size: 11px; }
+
+/* ─── Nota/destaque ─── */
+.nota-box { background: var(--amber-light); border-left: 3px solid var(--amber); border-radius: 0 var(--radius) var(--radius) 0; padding: 8px 12px; font-size: 12px; color: var(--text2); margin-top: 8px; }
+
+/* ─── Detail pane ─── */
+.detail-header { display: flex; gap: 12px; align-items: flex-start; margin-bottom: 20px; }
+.detail-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 14px; margin-bottom: 20px; }
+.detail-field label { font-size: 11px; font-weight: 600; color: var(--text3); text-transform: uppercase; letter-spacing: .04em; display: block; margin-bottom: 3px; }
+.detail-field p { font-size: 13px; color: var(--text); }
+</style>
+</head>
+<body>
+
+<div class="app">
+<!-- ══ SIDEBAR ══ -->
+<div class="sidebar" id="sidebar">
+  <div class="sidebar-logo">
+    <div class="logo-mark">⚖️</div>
+    <h1>LexOffice</h1>
+    <p>Sistema Jurídico Integrado</p>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Geral</div>
+    <div class="nav-item active" onclick="navigate('dashboard')" data-page="dashboard">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7" rx="1"/><rect x="14" y="3" width="7" height="7" rx="1"/><rect x="3" y="14" width="7" height="7" rx="1"/><rect x="14" y="14" width="7" height="7" rx="1"/></svg>
+      Painel
+    </div>
+    <div class="nav-item" onclick="navigate('processos')" data-page="processos">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+      Processos <span class="nav-badge" id="badge-processos" style="display:none">0</span>
+    </div>
+    <div class="nav-item" onclick="navigate('clientes')" data-page="clientes">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+      Clientes
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Gestão</div>
+    <div class="nav-item" onclick="navigate('agenda')" data-page="agenda">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+      Agenda
+    </div>
+    <div class="nav-item" onclick="navigate('prazos')" data-page="prazos">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><polyline points="12 6 12 12 16 14"/></svg>
+      Prazos <span class="nav-badge" id="badge-prazos" style="display:none">0</span>
+    </div>
+    <div class="nav-item" onclick="navigate('tarefas')" data-page="tarefas">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="9 11 12 14 22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      Tarefas <span class="nav-badge" id="badge-tarefas" style="display:none">0</span>
+    </div>
+  </div>
+
+  <div class="nav-section">
+    <div class="nav-label">Financeiro</div>
+    <div class="nav-item" onclick="navigate('financeiro')" data-page="financeiro">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="1" x2="12" y2="23"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/></svg>
+      Financeiro
+    </div>
+    <div class="nav-item" onclick="navigate('relatorios')" data-page="relatorios">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="20" x2="18" y2="10"/><line x1="12" y1="20" x2="12" y2="4"/><line x1="6" y1="20" x2="6" y2="14"/></svg>
+      Relatórios
+    </div>
+    <div class="nav-item" onclick="navigate('documentos')" data-page="documentos">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4"/><polyline points="17 8 12 3 7 8"/><line x1="12" y1="3" x2="12" y2="15"/></svg>
+      Documentos
+    </div>
+  </div>
+
+  <div class="sidebar-footer">
+    <strong>Dr. Antonio</strong>
+    OAB/RJ 146756<br>
+    Campos dos Goytacazes, RJ
+    <div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+      <div id="drive-user" style="font-size:11px;color:var(--text2);margin-bottom:6px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></div>
+      <div id="drive-status" style="font-size:11px;margin-bottom:8px;line-height:1.4">💾 Modo local</div>
+      <div style="display:flex;flex-direction:column;gap:5px">
+        <button id="btn-drive-login" class="btn btn-sm btn-primary" onclick="driveLogin()" style="font-size:11px;justify-content:center">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="currentColor"><path d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+          Conectar Google Drive
+        </button>
+        <button id="btn-drive-sync" class="btn btn-sm" onclick="driveSyncNow()" style="display:none;font-size:11px;justify-content:center">🔄 Sincronizar agora</button>
+        <button id="btn-drive-logout" class="btn btn-sm btn-ghost" onclick="driveLogout()" style="display:none;font-size:11px;justify-content:center">Desconectar Drive</button>
+      </div>
+    </div>
+    <div style="margin-top:8px;display:flex;gap:5px;flex-wrap:wrap">
+      <button class="btn btn-sm btn-ghost" onclick="exportarDados()" style="font-size:10px;padding:3px 8px">⬇ Exportar JSON</button>
+      <button class="btn btn-sm btn-ghost" onclick="importarDados()" style="font-size:10px;padding:3px 8px">⬆ Importar JSON</button>
+    </div>
+  </div>
+</div>
+
+<!-- ══ MAIN ══ -->
+<div class="main">
+  <div class="topbar">
+    <button class="btn btn-icon btn-ghost" onclick="document.getElementById('sidebar').classList.toggle('open')" style="display:none" id="menu-toggle">
+      <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" stroke-width="2"><line x1="3" y1="6" x2="21" y2="6"/><line x1="3" y1="12" x2="21" y2="12"/><line x1="3" y1="18" x2="21" y2="18"/></svg>
+    </button>
+    <div class="topbar-title" id="page-title">Painel</div>
+    <div class="topbar-actions" id="topbar-actions"></div>
+  </div>
+
+  <div class="content" id="content"></div>
+</div>
+</div>
+
+<!-- ══ MODAL ROOT ══ -->
+<div id="modal-root"></div>
+<input type="file" id="file-import" accept=".json" style="display:none" onchange="handleImport(event)">
+
+<script>
+'use strict';
+
+// ══════════════════════════════════════════
+// GOOGLE DRIVE CONFIG
+// ══════════════════════════════════════════
+const GOOG_CLIENT_ID = '370368544958-h1059ab95mgluc1a2s9qb0m2afau9ork.apps.googleusercontent.com';
+const GOOG_SCOPES    = 'https://www.googleapis.com/auth/drive.appdata https://www.googleapis.com/auth/userinfo.email';
+const DB_FILENAME    = 'lexoffice-db.json';
+const LS_KEY         = 'lexoffice_v2';
+
+// Drive state
+let gToken       = null;
+let gFileId      = null;
+let gSaving      = false;
+let gSavePending = false;
+let gUserName    = '';
+let gTokenClient = null; // GIS token client
+
+// ── Status bar ──────────────────────────────
+function setDriveStatus(msg, type) {
+  const el = document.getElementById('drive-status');
+  if (!el) return;
+  const icons = { ok:'☁️', saving:'⏳', warn:'⚠️', error:'❌', offline:'💾', auth:'🔑' };
+  el.textContent = (icons[type]||'') + ' ' + msg;
+  el.style.color = type==='error' ? 'var(--red)' : type==='ok' ? 'var(--green)' : type==='saving' ? 'var(--accent)' : 'var(--amber)';
+}
+
+// ── Inicializa GIS token client ──────────────
+function initGIS() {
+  if (!window.google) { setTimeout(initGIS, 300); return; }
+  gTokenClient = google.accounts.oauth2.initTokenClient({
+    client_id: GOOG_CLIENT_ID,
+    scope:     GOOG_SCOPES,
+    callback:  async (resp) => {
+      if (resp.error) {
+        setDriveStatus('Erro no login: ' + resp.error, 'error');
+        return;
+      }
+      gToken = resp.access_token;
+      // GIS tokens expiram em 1h — agenda renovação
+      setTimeout(renovarToken, (resp.expires_in - 60) * 1000);
+      await afterLogin();
+    },
+  });
+}
+
+function renovarToken() {
+  if (!gTokenClient) return;
+  // Solicita novo token silenciosamente (sem popup se já autorizado)
+  gTokenClient.requestAccessToken({ prompt: '' });
+}
+
+// ── Login / Logout ───────────────────────────
+function driveLogin() {
+  if (!gTokenClient) { setDriveStatus('Biblioteca Google ainda carregando, tente em 2s…', 'warn'); setTimeout(driveLogin, 1500); return; }
+  setDriveStatus('Abrindo login Google…', 'auth');
+  gTokenClient.requestAccessToken({ prompt: 'select_account' });
+}
+
+function driveLogout() {
+  if (gToken) google.accounts.oauth2.revoke(gToken, () => {});
+  gToken = null; gFileId = null; gUserName = '';
+  updateDriveUI();
+  setDriveStatus('Desconectado — salvando localmente', 'offline');
+}
+
+async function afterLogin() {
+  setDriveStatus('Conectado. Carregando dados…', 'saving');
+  try {
+    const r = await fetch('https://www.googleapis.com/oauth2/v3/userinfo',
+      { headers: { Authorization: 'Bearer ' + gToken } });
+    const u = await r.json();
+    gUserName = u.name || u.email || '';
+  } catch(e) {}
+  updateDriveUI();
+  await driveLoadOrCreate();
+}
+
+function updateDriveUI() {
+  const el = document.getElementById('drive-user');
+  if (el) el.textContent = gUserName ? '👤 ' + gUserName : '';
+  const btnLogin  = document.getElementById('btn-drive-login');
+  const btnLogout = document.getElementById('btn-drive-logout');
+  const btnSync   = document.getElementById('btn-drive-sync');
+  if (btnLogin)  btnLogin.style.display  = gToken ? 'none' : '';
+  if (btnLogout) btnLogout.style.display = gToken ? '' : 'none';
+  if (btnSync)   btnSync.style.display   = gToken ? '' : 'none';
+}
+
+// ── Drive API helpers ────────────────────────
+async function driveReq(url, opts={}) {
+  if (!gToken) throw new Error('Sem token');
+  const headers = { Authorization: 'Bearer ' + gToken, ...(opts.headers||{}) };
+  const res = await fetch(url, { ...opts, headers });
+  if (res.status === 401) {
+    gToken = null; updateDriveUI();
+    setDriveStatus('Sessão expirada — faça login novamente', 'error');
+    throw new Error('401');
+  }
+  return res;
+}
+
+async function driveFindFile() {
+  const res = await driveReq(
+    `https://www.googleapis.com/drive/v3/files?spaces=appDataFolder&q=name%3D%27${DB_FILENAME}%27&fields=files(id,name,modifiedTime)`
+  );
+  const data = await res.json();
+  return data.files && data.files.length ? data.files[0] : null;
+}
+
+async function driveReadFile(fileId) {
+  const res = await driveReq(
+    `https://www.googleapis.com/drive/v3/files/${fileId}?alt=media`
+  );
+  return await res.json();
+}
+
+async function driveWriteFile(fileId, content) {
+  const body = JSON.stringify(content);
+  if (fileId) {
+    await driveReq(
+      `https://www.googleapis.com/upload/drive/v3/files/${fileId}?uploadType=media`,
+      { method: 'PATCH', headers: { 'Content-Type': 'application/json' }, body }
+    );
+  } else {
+    const meta = JSON.stringify({ name: DB_FILENAME, parents: ['appDataFolder'] });
+    const boundary = 'lex_boundary_x7z';
+    const mp = `--${boundary}\r\nContent-Type: application/json\r\n\r\n${meta}\r\n--${boundary}\r\nContent-Type: application/json\r\n\r\n${body}\r\n--${boundary}--`;
+    const res = await driveReq(
+      'https://www.googleapis.com/upload/drive/v3/files?uploadType=multipart&fields=id',
+      { method: 'POST', headers: { 'Content-Type': `multipart/related; boundary=${boundary}` }, body: mp }
+    );
+    const data = await res.json();
+    gFileId = data.id;
+  }
+}
+
+async function driveLoadOrCreate() {
+  try {
+    const file = await driveFindFile();
+    if (file) {
+      gFileId = file.id;
+      const data = await driveReadFile(file.id);
+      if (data && data.processos) {
+        DB = data;
+        DB.documentos = DB.documentos || [];
+        DB.config     = DB.config     || {};
+        saveLocalFallback();
+        render(); updateBadges();
+        setDriveStatus('Sincronizado (' + new Date().toLocaleTimeString('pt-BR') + ')', 'ok');
+      } else {
+        setDriveStatus('Arquivo no Drive vazio — usando dados locais', 'warn');
+      }
+    } else {
+      setDriveStatus('Primeiro acesso — enviando dados ao Drive…', 'saving');
+      await driveWriteFile(null, DB);
+      setDriveStatus('Base criada no Drive!', 'ok');
+    }
+  } catch(e) {
+    setDriveStatus('Erro: ' + e.message, 'error');
+  }
+}
+
+async function driveSyncNow() {
+  if (!gToken) return alert('Faça login no Google Drive primeiro.');
+  setDriveStatus('Sincronizando…', 'saving');
+  await driveLoadOrCreate();
+}
+
+// ── saveDB ────────────────────────────────────
+function saveLocalFallback() {
+  try { localStorage.setItem(LS_KEY, JSON.stringify(DB)); } catch(e) {}
+}
+
+async function saveDB() {
+  saveLocalFallback();
+  if (!gToken) { setDriveStatus('Salvo localmente (Drive desconectado)', 'offline'); return; }
+  if (gSaving) { gSavePending = true; return; }
+  gSaving = true;
+  setDriveStatus('Salvando…', 'saving');
+  try {
+    if (!gFileId) { const f = await driveFindFile(); gFileId = f ? f.id : null; }
+    await driveWriteFile(gFileId, DB);
+    setDriveStatus('Salvo no Drive (' + new Date().toLocaleTimeString('pt-BR') + ')', 'ok');
+  } catch(e) {
+    setDriveStatus('Erro ao salvar: ' + e.message, 'error');
+  } finally {
+    gSaving = false;
+    if (gSavePending) { gSavePending = false; saveDB(); }
+  }
+}
+
+// ── loadDB (local fallback) ───────────────────
+
+const PROCESSOS_BASE = [
+  {id:'p1',numero:'0819166-98.2024.8.19.0014',partes:'Naked Engenharia Ltda. x André Machado Ribeiro de Souza e outros',tribunal:'TJRJ',vara:'5ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'Naked Engenharia Ltda.',polo:'Autor',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p2',numero:'0101379-29.2018.5.01.0283',partes:'I.R.A. x I.O.L.A.',tribunal:'TRT1',vara:'3ª Vara do Trabalho',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Trabalhista',cliente:'',polo:'',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p3',numero:'0803999-75.2023.8.19.0014',partes:'Condomínio Residencial Europa x Dekan Empreendimentos Imobiliários',tribunal:'TJRJ',vara:'2ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'Condomínio Residencial Europa',polo:'Autor',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p4',numero:'0813700-26.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras (Exeq.) x Naked Engenharia (Exec.)',tribunal:'TJRJ',vara:'2ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cumprimento de Sentença',cliente:'Condomínio Recanto das Palmeiras',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p5',numero:'0101155-84.2024.5.01.0282',partes:'U.F. (Pres.) x N.E.',tribunal:'TRT1',vara:'Gabinete 24 | 7ª Turma',comarca:'Campos dos Goytacazes',instancia:'2º Grau',situacao:'Ativo',tipo:'Trabalhista',cliente:'',polo:'',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p6',numero:'0815934-78.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras x Naked Engenharia',tribunal:'TJRJ',vara:'2ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'Naked Engenharia Ltda.',polo:'Réu',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p7',numero:'0813702-93.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras (Exeq.) x Naked Engenharia (Exec.)',tribunal:'TJRJ',vara:'2ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cumprimento de Sentença',cliente:'Condomínio Recanto das Palmeiras',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p8',numero:'0824343-77.2023.8.19.0014',partes:'Deividy Monteiro de Souza x Vera Lucia Menezes Batista',tribunal:'TJRJ',vara:'2ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'',polo:'',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p9',numero:'0815332-87.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras x Naked Engenharia',tribunal:'TJRJ',vara:'3ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'Naked Engenharia Ltda.',polo:'Réu',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p10',numero:'0813714-10.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras (Exeq.) x Naked Engenharia (Exec.)',tribunal:'TJRJ',vara:'2ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cumprimento de Sentença',cliente:'Condomínio Recanto das Palmeiras',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p11',numero:'0100511-80.2020.5.01.0283',partes:'J.H.C.B. x E.C.T.B. e outros',tribunal:'TRT1',vara:'3ª Vara do Trabalho',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Trabalhista',cliente:'',polo:'',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p12',numero:'0010995-62.2026.8.19.0000',partes:'Cristina Ribeiro Lemos e outros x Naked Engenharia',tribunal:'TJRJ',vara:'2º Grau',comarca:'Rio de Janeiro',instancia:'2º Grau',situacao:'Ativo',tipo:'Recursal',cliente:'Naked Engenharia Ltda.',polo:'Réu',valor:0,notas:'',criado:'2026-06-01'},
+  {id:'p13',numero:'3004285-30.2026.8.19.0014',partes:'Claudia Marcia Laurindo Rangel Pinheiro x Banco Santander Brasil S.A.',tribunal:'TJRJ',vara:'4ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'Claudia Marcia Laurindo Rangel Pinheiro',polo:'Autor',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p14',numero:'0801674-25.2026.8.19.0014',partes:'Naked Engenharia Ltda. x LPW Cosméticos Ltda.',tribunal:'TJRJ',vara:'5ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'Naked Engenharia Ltda.',polo:'Autor',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p15',numero:'0821514-89.2024.8.19.0014',partes:'Naked Engenharia x Rodrigo Cherene Viana Barros',tribunal:'TJRJ',vara:'2ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'Naked Engenharia Ltda.',polo:'Autor',valor:0,notas:'',criado:'2026-05-19'},
+  {id:'p16',numero:'0017158-80.2007.8.19.0014',partes:'Pellon & Associados Advocacia Empresarial e outros x IRB-Brasil RE e outros',tribunal:'TJRJ',vara:'5ª Vara Cível | Cartório da 5ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'',polo:'',valor:0,notas:'Em atendimento',criado:'2026-05-13'},
+  {id:'p17',numero:'0811026-12.2023.8.19.0014',partes:'Amarino Caputo do Carmo (Herdeiro) e outros x Lucia Teixeira (Falecido)',tribunal:'TJRJ',vara:'3ª Vara de Família',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Sucessório',cliente:'Amarino Caputo do Carmo',polo:'Autor',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p18',numero:'0826614-25.2024.8.19.0014',partes:'Naked Engenharia x Fabio Mauricio de Melo Ruis',tribunal:'TJRJ',vara:'3ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'Naked Engenharia Ltda.',polo:'Autor',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p19',numero:'0815300-82.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras e outros x Naked Engenharia e outros',tribunal:'TJRJ',vara:'10ª Câmara | Des. Camilo Ribeiro Ruliere',comarca:'Campos dos Goytacazes',instancia:'2º Grau',situacao:'Ativo',tipo:'Recursal',cliente:'Naked Engenharia Ltda.',polo:'Réu',valor:0,notas:'Última alteração: 09/06/2026',criado:'2026-05-13'},
+  {id:'p20',numero:'0812923-41.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras (Exeq.) x Naked Engenharia (Exec.)',tribunal:'TJRJ',vara:'4ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cumprimento de Sentença',cliente:'Condomínio Recanto das Palmeiras',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p21',numero:'0102787-34.2025.8.19.0000',partes:'Naked Engenharia e outros x Condomínio Recanto das Palmeiras e outros',tribunal:'TJRJ',vara:'20ª Câmara | Des. André Luiz Cidra',comarca:'Campos dos Goytacazes',instancia:'2º Grau',situacao:'Ativo',tipo:'Recursal',cliente:'Naked Engenharia Ltda.',polo:'Autor',valor:0,notas:'Última alteração: 09/06/2026',criado:'2026-01-06'},
+  {id:'p22',numero:'0016830-38.2016.8.19.0014',partes:'RG Naked Empreendimentos SPE Ltda. e outros x Naked Engenharia e outros',tribunal:'TJRJ',vara:'Cartório da 5ª Vara Cível | 5ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'Naked Engenharia Ltda.',polo:'Réu',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p23',numero:'0813708-03.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras (Exeq.) x Naked Engenharia (Exec.)',tribunal:'TJRJ',vara:'4ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cumprimento de Sentença',cliente:'Condomínio Recanto das Palmeiras',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p24',numero:'0815313-81.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras (Exeq.) x Naked Engenharia (Exec.)',tribunal:'TJRJ',vara:'4ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cumprimento de Sentença',cliente:'Condomínio Recanto das Palmeiras',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p25',numero:'0811270-72.2022.8.19.0014',partes:'Condomínio Parthenon Park Residence (Cond.) x Maria Luiza Pereira Gonçalves (Exec.)',tribunal:'TJRJ',vara:'5ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Execução',cliente:'Condomínio Parthenon Park Residence',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p26',numero:'0820380-27.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras (Exeq.) x Naked Engenharia (Exec.)',tribunal:'TJRJ',vara:'2ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cumprimento de Sentença',cliente:'Condomínio Recanto das Palmeiras',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p27',numero:'0813697-71.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras (Exeq.) x Naked Engenharia (Exec.)',tribunal:'TJRJ',vara:'3ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cumprimento de Sentença',cliente:'Condomínio Recanto das Palmeiras',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p28',numero:'0004202-02.2025.8.19.0014',partes:'— (1º Juizado Especial Criminal)',tribunal:'TJRJ',vara:'1º Juizado Especial Criminal',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Criminal',cliente:'',polo:'',valor:0,notas:'Última alteração: 09/06/2026',criado:'2025-08-28'},
+  {id:'p29',numero:'0827125-23.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras x Naked Engenharia',tribunal:'TJRJ',vara:'2ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'Naked Engenharia Ltda.',polo:'Réu',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p30',numero:'0823408-66.2025.8.19.0014',partes:'Naked Engenharia x Condomínio Recanto das Palmeiras',tribunal:'TJRJ',vara:'4ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'Naked Engenharia Ltda.',polo:'Autor',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p31',numero:'0819208-84.2023.8.19.0014',partes:'Angela Chacur Seixas (Exeq.) x Marcos Aurelio Dias Martins (Exec.) e outros',tribunal:'TJRJ',vara:'2º Juizado Especial Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Execução',cliente:'Angela Chacur Seixas',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p32',numero:'0812920-86.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras (Exeq.) x Naked Engenharia (Exec.)',tribunal:'TJRJ',vara:'5ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cumprimento de Sentença',cliente:'Condomínio Recanto das Palmeiras',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p33',numero:'0812936-40.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras (Exeq.) x Naked Engenharia (Exec.)',tribunal:'TJRJ',vara:'5ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cumprimento de Sentença',cliente:'Condomínio Recanto das Palmeiras',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p34',numero:'0000048-35.2022.8.19.0049',partes:'Naked Engenharia e outros x Ampla Energia e Serviços S/A',tribunal:'TJRJ',vara:'Vara Única',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'Naked Engenharia Ltda.',polo:'Autor',valor:0,notas:'',criado:'2026-05-19'},
+  {id:'p35',numero:'0810928-90.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras (Exeq.) x Naked Engenharia (Exec.)',tribunal:'TJRJ',vara:'2ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cumprimento de Sentença',cliente:'Condomínio Recanto das Palmeiras',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p36',numero:'0819421-22.2025.8.19.0014',partes:'Naked Engenharia (Exeq.) x Antonio Luiz Manhaes Areas (Exec.) e outros',tribunal:'TJRJ',vara:'3ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cumprimento de Sentença',cliente:'Naked Engenharia Ltda.',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p37',numero:'0818045-98.2025.8.19.0014',partes:'Eleonora Dib Chacur Naked x Jonatas Vinicius Borges de Oliveira e outros',tribunal:'TJRJ',vara:'2º Juizado Especial Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'Eleonora Dib Chacur Naked',polo:'Autor',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p38',numero:'0815303-37.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras (Exeq.) x Naked Engenharia (Exec.)',tribunal:'TJRJ',vara:'3ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cumprimento de Sentença',cliente:'Condomínio Recanto das Palmeiras',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p39',numero:'0814592-32.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras (Exeq.) x Naked Engenharia (Exec.)',tribunal:'TJRJ',vara:'5ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cumprimento de Sentença',cliente:'Condomínio Recanto das Palmeiras',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p40',numero:'0812911-27.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras (Exeq.) x Naked Engenharia (Exec.)',tribunal:'TJRJ',vara:'5ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cumprimento de Sentença',cliente:'Condomínio Recanto das Palmeiras',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p41',numero:'0814574-11.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras (Exeq.) x Naked Engenharia (Exec.)',tribunal:'TJRJ',vara:'3ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cumprimento de Sentença',cliente:'Condomínio Recanto das Palmeiras',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p42',numero:'0825640-22.2023.8.19.0014',partes:'Sirlei de Almeida Bastos x Naked Engenharia',tribunal:'TJRJ',vara:'4ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'Naked Engenharia Ltda.',polo:'Réu',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p43',numero:'0813698-56.2024.8.19.0014',partes:'(sem partes identificadas)',tribunal:'TJRJ',vara:'—',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'',polo:'',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p44',numero:'0814599-24.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras (Exeq.) x Naked Engenharia (Exec.)',tribunal:'TJRJ',vara:'3ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cumprimento de Sentença',cliente:'Condomínio Recanto das Palmeiras',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p45',numero:'0804651-92.2023.8.19.0014',partes:'Eleonora Dib Chacur Naked (Exeq.) x Apple Computer Brasil Ltda. (Exec.) e outros',tribunal:'TJRJ',vara:'2º Juizado Especial Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Execução',cliente:'Eleonora Dib Chacur Naked',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p46',numero:'0813707-18.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras (Exeq.) x Naked Engenharia (Exec.)',tribunal:'TJRJ',vara:'4ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cumprimento de Sentença',cliente:'Condomínio Recanto das Palmeiras',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p47',numero:'0826504-26.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras e outros x Naked Engenharia e outros',tribunal:'TJRJ',vara:'18ª Câmara | Des. Maria Regina Fonseca Nova Alves',comarca:'Campos dos Goytacazes',instancia:'2º Grau',situacao:'Ativo',tipo:'Recursal',cliente:'Naked Engenharia Ltda.',polo:'Réu',valor:0,notas:'Última alteração: 09/06/2026',criado:'2026-05-13'},
+  {id:'p48',numero:'0812924-26.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras (Exeq.) x Naked Engenharia (Exec.)',tribunal:'TJRJ',vara:'4ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cumprimento de Sentença',cliente:'Condomínio Recanto das Palmeiras',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p49',numero:'0016647-67.2016.8.19.0014',partes:'Assoc. Adquirentes do Empreendimento Supreme de Campos x NEP Incorporações Ltda. SPE 5',tribunal:'TJRJ',vara:'7ª Câmara | Des. Alexandre de Carvalho Mesquita',comarca:'Campos dos Goytacazes',instancia:'2º Grau',situacao:'Ativo',tipo:'Recursal',cliente:'',polo:'',valor:0,notas:'Última alteração: 10/06/2026',criado:'2026-05-27'},
+  {id:'p50',numero:'0010078-79.2018.8.19.0014',partes:'Enilso Coelho de Souza e outros x Helson Batista Pereira Junior',tribunal:'TJRJ',vara:'Cartório da 5ª Vara Cível | 5ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'',polo:'',valor:0,notas:'',criado:'2026-05-21'},
+  {id:'p51',numero:'0814575-93.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras e outros x Naked Engenharia e outros',tribunal:'TJRJ',vara:'13ª Câmara | Des. Teresa de Andrade',comarca:'Campos dos Goytacazes',instancia:'2º Grau',situacao:'Ativo',tipo:'Recursal',cliente:'Naked Engenharia Ltda.',polo:'Réu',valor:0,notas:'Última alteração: 09/06/2026',criado:'2026-05-13'},
+  {id:'p52',numero:'0810907-80.2025.8.19.0014',partes:'Naked Engenharia x Ampla Energia e Serviços S.A.',tribunal:'TJRJ',vara:'1ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'Naked Engenharia Ltda.',polo:'Autor',valor:0,notas:'Última alteração: 09/06/2026',criado:'2025-08-28'},
+  {id:'p53',numero:'0815311-14.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras (Exeq.) x Naked Engenharia (Exec.)',tribunal:'TJRJ',vara:'4ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cumprimento de Sentença',cliente:'Condomínio Recanto das Palmeiras',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p54',numero:'0803407-60.2025.8.19.0014',partes:'Gilberto de Oliveira Tavares x Ralph da Silva Santana',tribunal:'TJRJ',vara:'1ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'',polo:'',valor:0,notas:'Última alteração: 09/06/2026',criado:'2025-08-28'},
+  {id:'p55',numero:'0827499-39.2024.8.19.0014',partes:'Naked Engenharia x Roberto Amaral da Silva',tribunal:'TJRJ',vara:'1ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'Naked Engenharia Ltda.',polo:'Autor',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p56',numero:'0802014-37.2024.8.19.0014',partes:'Naked Engenharia x Ampla Energia e Serviços S.A.',tribunal:'TJRJ',vara:'2ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'Naked Engenharia Ltda.',polo:'Autor',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p57',numero:'0818613-17.2025.8.19.0014',partes:'Lucas Chacur Naked e outros x Ampla Energia e Serviços S.A.',tribunal:'TJRJ',vara:'5ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'Lucas Chacur Naked',polo:'Autor',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p58',numero:'0812935-55.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras (Exeq.) x Naked Engenharia (Exec.)',tribunal:'TJRJ',vara:'3ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cumprimento de Sentença',cliente:'Condomínio Recanto das Palmeiras',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p59',numero:'0800114-19.2024.8.19.0014',partes:'Amaro Jose Peixoto do Carmo (Herdeiro) e outros x Marilza Caputo do Carmo (Inventariado)',tribunal:'TJRJ',vara:'3ª Vara de Família',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Sucessório',cliente:'Amaro Jose Peixoto do Carmo',polo:'Autor',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p60',numero:'0102021-76.2016.5.01.0281',partes:'T.M.D. x K.V.P.M.',tribunal:'TRT1',vara:'1ª Vara do Trabalho',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Trabalhista',cliente:'',polo:'',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p61',numero:'0814595-84.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras (Exeq.) x Naked Engenharia (Exec.)',tribunal:'TJRJ',vara:'3ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cumprimento de Sentença',cliente:'Condomínio Recanto das Palmeiras',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p62',numero:'0100417-69.2019.5.01.0283',partes:'L.M.R.S.M. x J.F.S. e outros',tribunal:'TRT1',vara:'3ª Vara do Trabalho',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Trabalhista',cliente:'',polo:'',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p63',numero:'0811819-48.2023.8.19.0014',partes:'Naked Engenharia x Rodrigo Francisco Almeida',tribunal:'TJRJ',vara:'2ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'Naked Engenharia Ltda.',polo:'Autor',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p64',numero:'0000330-86.2019.8.19.0014',partes:'Estado do Rio de Janeiro x Edward Monteiro Siqueira',tribunal:'TJRJ',vara:'—',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Fazenda Pública',cliente:'',polo:'',valor:0,notas:'',criado:'2026-06-01'},
+  {id:'p65',numero:'0816798-53.2023.8.19.0014',partes:'Naked Engenharia (Exeq.) x Amaro Alves da Silva (Exec.) e outros',tribunal:'TJRJ',vara:'3ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cumprimento de Sentença',cliente:'Naked Engenharia Ltda.',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p66',numero:'5012001-48.2023.4.02.5103',partes:'Rondinelio Menezes Batista x Caixa Econômica Federal CEF e outros',tribunal:'TRF2',vara:'Gabinete VP | Assessoria de Recursos',comarca:'Rio de Janeiro',instancia:'2º Grau',situacao:'Ativo',tipo:'Federal',cliente:'Rondinelio Menezes Batista',polo:'Autor',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p67',numero:'0036352-80.2018.8.19.0014',partes:'Arialdo Neves Miguel e outros x Leandro Gomes Cardoso e outros',tribunal:'TJRJ',vara:'Cartório da 5ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'',polo:'',valor:0,notas:'',criado:'2026-05-14'},
+  {id:'p68',numero:'0013629-33.2019.8.19.0014',partes:'Reinaldo Pereira de Souza x Amaro de Souza Junior',tribunal:'TJRJ',vara:'—',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'',polo:'',valor:0,notas:'',criado:'2026-06-02'},
+  {id:'p69',numero:'0842163-85.2022.8.19.0001',partes:'Naked Engenharia (Exeq.) x Telemar Norte Leste S/A (Exec.)',tribunal:'TJRJ',vara:'27ª Vara Cível',comarca:'Capital (Rio de Janeiro)',instancia:'1º Grau',situacao:'Ativo',tipo:'Cumprimento de Sentença',cliente:'Naked Engenharia Ltda.',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p70',numero:'0801789-46.2026.8.19.0014',partes:'Igshaan Holding e Participações SA (Exeq.) x Flávia Lima Carvalho (Exec.) e outros',tribunal:'TJRJ',vara:'2ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Execução',cliente:'Igshaan Holding e Participações SA',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p71',numero:'0820840-48.2023.8.19.0014',partes:'Ronaldo Naked x Ampla Energia e Serviços S.A.',tribunal:'TJRJ',vara:'3ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'Ronaldo Naked',polo:'Autor',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p72',numero:'0815315-51.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras e outros x Naked Engenharia e outros',tribunal:'TJRJ',vara:'9ª Câmara | Des. Alexandre Freitas Câmara',comarca:'Campos dos Goytacazes',instancia:'2º Grau',situacao:'Arquivado',tipo:'Recursal',cliente:'Naked Engenharia Ltda.',polo:'Réu',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p73',numero:'0814604-46.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras e outros x Naked Engenharia e outros',tribunal:'TJRJ',vara:'14ª Câmara | Des. Renato Lima Charnaux Serta',comarca:'Campos dos Goytacazes',instancia:'2º Grau',situacao:'Arquivado',tipo:'Recursal',cliente:'Naked Engenharia Ltda.',polo:'Réu',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p74',numero:'0810926-23.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras e outros x Naked Engenharia e outros',tribunal:'TJRJ',vara:'22ª Câmara | Des. Murilo André Kieling Cardona Pereira',comarca:'Campos dos Goytacazes',instancia:'2º Grau',situacao:'Arquivado',tipo:'Recursal',cliente:'Naked Engenharia Ltda.',polo:'Réu',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p75',numero:'0815306-89.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras (Exeq.) x Naked Engenharia (Exec.)',tribunal:'TJRJ',vara:'5ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cumprimento de Sentença',cliente:'Condomínio Recanto das Palmeiras',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p76',numero:'0003173-10.2008.8.19.0014',partes:'Geraldo Nogueira e outros x Naked Engenharia',tribunal:'TJRJ',vara:'—',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'Naked Engenharia Ltda.',polo:'Réu',valor:0,notas:'',criado:'2026-06-02'},
+  {id:'p77',numero:'0808130-93.2023.8.19.0014',partes:'Naked Engenharia x Aldenir Cabrera Carvalho e outros',tribunal:'TJRJ',vara:'3ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'Naked Engenharia Ltda.',polo:'Autor',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p78',numero:'0800249-31.2024.8.19.0014',partes:'Naked Engenharia (Exeq.) x Condomínio Recanto das Palmeiras (Cond.)',tribunal:'TJRJ',vara:'1ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cumprimento de Sentença',cliente:'Naked Engenharia Ltda.',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p79',numero:'0810477-65.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras (Exeq.) x Naked Engenharia (Exec.)',tribunal:'TJRJ',vara:'3ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cumprimento de Sentença',cliente:'Condomínio Recanto das Palmeiras',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p80',numero:'0814577-63.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras (Exeq.) x Naked Engenharia (Exec.)',tribunal:'TJRJ',vara:'1ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cumprimento de Sentença',cliente:'Condomínio Recanto das Palmeiras',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p81',numero:'0826584-87.2024.8.19.0014',partes:'Naked Engenharia x Danubio Fernando Oliveira Barbacena',tribunal:'TJRJ',vara:'3ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'Naked Engenharia Ltda.',polo:'Autor',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p82',numero:'0812910-42.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras (Exeq.) x Naked Engenharia (Exec.)',tribunal:'TJRJ',vara:'3ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cumprimento de Sentença',cliente:'Condomínio Recanto das Palmeiras',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p83',numero:'0813703-78.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras (Exeq.) x Naked Engenharia (Exec.)',tribunal:'TJRJ',vara:'3ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cumprimento de Sentença',cliente:'Condomínio Recanto das Palmeiras',polo:'Exequente',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p84',numero:'0024345-95.2014.8.19.0014',partes:'Naked Engenharia x A M Nuneds & CIA Ltda-ME e outros',tribunal:'TJRJ',vara:'—',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'Naked Engenharia Ltda.',polo:'Autor',valor:0,notas:'',criado:'2026-06-08'},
+  {id:'p85',numero:'0008904-21.2007.8.19.0014',partes:'Alfredo Nagib Felix x Antonio Claudio de Araujo Fernandes e outros',tribunal:'TJRJ',vara:'—',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'',polo:'',valor:0,notas:'',criado:'2026-06-01'},
+  {id:'p86',numero:'0810290-23.2025.8.19.0014',partes:'Naked Engenharia x Mega Pan Distribuidora Atacadista de Alimentos',tribunal:'TJRJ',vara:'3ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'Naked Engenharia Ltda.',polo:'Autor',valor:0,notas:'Última alteração: 09/06/2026',criado:'2025-08-28'},
+  {id:'p87',numero:'0004676-17.2018.8.19.0014',partes:'Assoc. Adquirentes do Empreendimento Supreme Campos e outros x Naked Engenharia e outros',tribunal:'TJRJ',vara:'Cartório da 3ª Vara Cível | 3ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'Naked Engenharia Ltda.',polo:'Réu',valor:0,notas:'',criado:'2026-05-27'},
+  {id:'p88',numero:'0006950-12.2022.8.19.0014',partes:'Naked Engenharia x Linaldo de Souza Lyra',tribunal:'TJRJ',vara:'—',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cumprimento de Sentença',cliente:'Naked Engenharia Ltda.',polo:'Exequente',valor:0,notas:'Cálculos IPCA-E + Selic elaborados. Cumprimento de sentença em andamento.',criado:'2026-06-02'},
+  {id:'p89',numero:'0816652-75.2024.8.19.0014',partes:'Espólio de Lério Rangel Paes (Arrolamento Comum)',tribunal:'TJRJ',vara:'—',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Sucessório',cliente:'Espólio de Lério Rangel Paes',polo:'',valor:0,notas:'Arrolamento comum. Sentença de extinção proferida. Embargos de declaração a protocolar. Substabelecimento recente. Itens de cumprimento pendentes.',criado:'2026-06-03'},
+  {id:'p90',numero:'5099414-47.2019.4.02.5101',partes:'OAB/RJ x Antonio Juliao Pinheiro Neto',tribunal:'TRF2',vara:'Juízo Substituto da 1ª VF de Campos',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Federal',cliente:'',polo:'',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p91',numero:'0815312-96.2024.8.19.0014',partes:'Condomínio Recanto das Palmeiras e outros x Naked Engenharia e outros',tribunal:'TJRJ',vara:'2ª Câmara | Des. Carlos Santos de Oliveira',comarca:'Campos dos Goytacazes',instancia:'2º Grau',situacao:'Ativo',tipo:'Recursal',cliente:'Naked Engenharia Ltda.',polo:'Réu',valor:0,notas:'Última alteração: 09/06/2026',criado:'2026-05-13'},
+  {id:'p92',numero:'0068000-96.2013.8.19.0000',partes:'Regina de Souza do Espírito Santo Lima x Francisco Mateus Batista de Souza',tribunal:'TJRJ',vara:'Min. Moura Ribeiro — Terceira Turma',comarca:'Brasília (STJ)',instancia:'Superior',situacao:'Ativo',tipo:'Recursal',cliente:'',polo:'',valor:0,notas:'STJ — Terceira Turma',criado:'2026-05-13'},
+  {id:'p93',numero:'0016830-38.2016.8.19.0014',partes:'Naked Engenharia e outros x Xerxes Ricardo da Silva Soares',tribunal:'TJRJ',vara:'Min. Ricardo Villas Bôas Cueva — Terceira Turma',comarca:'Brasília (STJ)',instancia:'Superior',situacao:'Ativo',tipo:'Recursal',cliente:'Naked Engenharia Ltda.',polo:'Autor',valor:0,notas:'STJ',criado:'2026-05-13'},
+  {id:'p94',numero:'0017158-80.2007.8.19.0014',partes:'Naked Engenharia e outros x Sul América Seguros de Automóveis e Massificados S.A.',tribunal:'TJRJ',vara:'Min. Marco Buzzi — Quarta Turma',comarca:'Brasília (STJ)',instancia:'Superior',situacao:'Ativo',tipo:'Recursal',cliente:'Naked Engenharia Ltda.',polo:'Autor',valor:0,notas:'STJ',criado:'2026-05-13'},
+  {id:'p95',numero:'0819314-12.2024.8.19.0014',partes:'(sem partes identificadas)',tribunal:'TJRJ',vara:'—',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'',polo:'',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p96',numero:'0025537-92.2016.8.19.0014',partes:'Maria da Penha da Cruz Monteiro da Silva e outros x Silvio Pinheiro',tribunal:'TJRJ',vara:'Cartório da 3ª Vara Cível | 3ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'',polo:'',valor:0,notas:'',criado:'2026-05-13'},
+  {id:'p97',numero:'0025658-47.2021.8.19.0014',partes:'Naked Engenharia x Município de Campos dos Goytacazes-RJ',tribunal:'TJRJ',vara:'—',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Fazenda Pública',cliente:'Naked Engenharia Ltda.',polo:'Autor',valor:0,notas:'',criado:'2026-06-02'},
+  {id:'p98',numero:'0028611-84.2025.8.19.0000',partes:'Naked Engenharia x Condomínio Recanto das Palmeiras',tribunal:'TJRJ',vara:'13ª Câmara — CGT 1ª Vara Cível',comarca:'Campos dos Goytacazes',instancia:'2º Grau',situacao:'Ativo',tipo:'Recursal',cliente:'Naked Engenharia Ltda.',polo:'Autor',valor:0,notas:'Última alteração: 09/06/2026',criado:'2025-08-28'},
+  {id:'p99',numero:'0106627-91.2016.4.02.5103',partes:'INSS e outros x Alberto dos Anjos Francisco e outros',tribunal:'TRF2',vara:'GABINETE 22 | 8ª Turma Especializada',comarca:'Rio de Janeiro',instancia:'2º Grau',situacao:'Arquivado',tipo:'Federal',cliente:'',polo:'',valor:0,notas:'',criado:'2026-05-13'},
+];
+
+function defaultDB() {
+  return {
+    processos: JSON.parse(JSON.stringify(PROCESSOS_BASE)),
+    clientes: [
+      {id:'c1',nome:'Naked Engenharia Ltda.',tipo:'PJ',cpfcnpj:'',email:'',tel:'',endereco:'Campos dos Goytacazes, RJ',notas:'Principal cliente. Família Naked (Ronaldo, Eleonora, Lucas Chacur Naked). Múltiplos processos ativos como autor e réu.',criado:'2026-05-13'},
+      {id:'c2',nome:'Condomínio Residencial Recanto das Palmeiras',tipo:'PJ',cpfcnpj:'',email:'',tel:'',endereco:'Campos dos Goytacazes, RJ',notas:'Numerosos processos de cumprimento de sentença contra Naked Engenharia em diversas varas cíveis.',criado:'2026-05-13'},
+      {id:'c3',nome:'Condomínio Residencial Europa',tipo:'PJ',cpfcnpj:'',email:'',tel:'',endereco:'Campos dos Goytacazes, RJ',notas:'',criado:'2026-05-13'},
+      {id:'c4',nome:'Condomínio Parthenon Park Residence',tipo:'PJ',cpfcnpj:'',email:'',tel:'',endereco:'Campos dos Goytacazes, RJ',notas:'Processo de execução contra Maria Luiza Pereira Gonçalves (0811270-72.2022).',criado:'2026-05-13'},
+      {id:'c5',nome:'Angela Chacur Seixas',tipo:'PF',cpfcnpj:'',email:'',tel:'',endereco:'Campos dos Goytacazes, RJ',notas:'',criado:'2026-05-13'},
+      {id:'c6',nome:'Eleonora Dib Chacur Naked',tipo:'PF',cpfcnpj:'',email:'',tel:'',endereco:'Campos dos Goytacazes, RJ',notas:'Familiar da família Naked. Processos no JEC.',criado:'2026-05-13'},
+      {id:'c7',nome:'Claudia Marcia Laurindo Rangel Pinheiro',tipo:'PF',cpfcnpj:'',email:'',tel:'',endereco:'Campos dos Goytacazes, RJ',notas:'Ação contra Banco Santander (3004285-30.2026).',criado:'2026-05-13'},
+      {id:'c8',nome:'Rondinelio Menezes Batista',tipo:'PF',cpfcnpj:'',email:'',tel:'',endereco:'Campos dos Goytacazes, RJ',notas:'Processo federal TRF2 contra Caixa Econômica Federal.',criado:'2026-05-13'},
+      {id:'c9',nome:'Espólio de Lério Rangel Paes',tipo:'PJ',cpfcnpj:'',email:'',tel:'',endereco:'Campos dos Goytacazes, RJ',notas:'Arrolamento comum (0816652-75.2024.8.19.0014). Substabelecimento recente. Embargos de declaração pendentes.',criado:'2026-06-03'},
+      {id:'c10',nome:'Lucas Chacur Naked',tipo:'PF',cpfcnpj:'',email:'',tel:'',endereco:'Campos dos Goytacazes, RJ',notas:'Processo contra Ampla Energia (0818613-17.2025).',criado:'2026-05-13'},
+      {id:'c11',nome:'Ronaldo Naked',tipo:'PF',cpfcnpj:'',email:'',tel:'',endereco:'Campos dos Goytacazes, RJ',notas:'Processo contra Ampla Energia (0820840-48.2023) e STJ.',criado:'2026-05-13'},
+      {id:'c12',nome:'Igshaan Holding e Participações SA',tipo:'PJ',cpfcnpj:'',email:'',tel:'',endereco:'Campos dos Goytacazes, RJ',notas:'Execução contra Flávia Lima Carvalho e outros (0801789-46.2026).',criado:'2026-05-13'},
+    ],
+    prazos: [
+      {id:'pr1',titulo:'Embargos de Declaração — Espólio Lério Rangel Paes',processo:'0816652-75.2024.8.19.0014',data:'2026-06-20',hora:'17:00',tipo:'Prazo Processual',prioridade:'Alta',status:'Pendente',notas:'Revisar cumprimento dos itens pendentes da decisão antes de protocolar. Processo em situação "Falhado" — verificar no TJRJ.',criado:'2026-06-10'},
+      {id:'pr2',titulo:'Manifestação — Cristina Ribeiro Lemos x Naked (2º Grau)',processo:'0010995-62.2026.8.19.0000',data:'2026-06-25',hora:'17:00',tipo:'Prazo Processual',prioridade:'Alta',status:'Pendente',notas:'Verificar intimação no diário oficial.',criado:'2026-06-10'},
+      {id:'pr3',titulo:'Petição — Recanto das Palmeiras x Naked 0815300',processo:'0815300-82.2024.8.19.0014',data:'2026-07-01',hora:'17:00',tipo:'Prazo Processual',prioridade:'Média',status:'Pendente',notas:'10ª Câmara, Des. Camilo Ribeiro Ruliere.',criado:'2026-06-10'},
+      {id:'pr4',titulo:'Memorial — UENF x K9 Vigilância (TST)',processo:'0102021-76.2016.5.01.0281',data:'2026-06-30',hora:'17:00',tipo:'Prazo Processual',prioridade:'Média',status:'Pendente',notas:'Instância Superior — Min. Cláudio Mascarenhas Brandão.',criado:'2026-06-10'},
+      {id:'pr5',titulo:'Verificar publicações DJE — processos Naked',processo:'',data:'2026-06-11',hora:'09:00',tipo:'Diligência',prioridade:'Alta',status:'Pendente',notas:'Conferir DJE de todos os processos da família Naked.',criado:'2026-06-10'},
+    ],
+    tarefas: [
+      {id:'t1',titulo:'Calcular débito atualizado — Naked x Linaldo (0006950)',processo:'0006950-12.2022.8.19.0014',prazo:'2026-06-15',prioridade:'Alta',status:'Em andamento',responsavel:'Dr. Antonio',notas:'Usar IPCA-E + Selic conforme tabela TJRJ. Memória de cálculo anterior disponível.',criado:'2026-06-10'},
+      {id:'t2',titulo:'Analisar postura processual — Arrolamento Espólio Lério',processo:'0816652-75.2024.8.19.0014',prazo:'2026-06-12',prioridade:'Alta',status:'Pendente',responsavel:'Dr. Antonio',notas:'Verificar sentença de extinção, mapear itens de cumprimento e minutar embargos de declaração.',criado:'2026-06-10'},
+      {id:'t3',titulo:'Peticionar — Naked x LPW Cosméticos',processo:'0801674-25.2026.8.19.0014',prazo:'2026-06-20',prioridade:'Média',status:'Pendente',responsavel:'Dr. Antonio',notas:'',criado:'2026-06-10'},
+      {id:'t4',titulo:'Atualizar dados de contato dos clientes (CPF/CNPJ/email)',processo:'',prazo:'2026-06-14',prioridade:'Baixa',status:'Pendente',responsavel:'Dr. Antonio',notas:'',criado:'2026-06-10'},
+      {id:'t5',titulo:'Verificar situação — processo 0819314-12.2024 (sem partes)',processo:'0819314-12.2024.8.19.0014',prazo:'2026-06-12',prioridade:'Média',status:'Pendente',responsavel:'Dr. Antonio',notas:'Processo sem partes identificadas no sistema.',criado:'2026-06-10'},
+      {id:'t6',titulo:'Revisar recursos pendentes nos 3 processos arquivados Naked/Recanto',processo:'',prazo:'2026-06-18',prioridade:'Média',status:'Pendente',responsavel:'Dr. Antonio',notas:'Procs 0815315, 0814604 e 0810926 — verificar se há nova instância em andamento.',criado:'2026-06-10'},
+    ],
+    agenda: [
+      {id:'e1',titulo:'Audiência — Parthenon Park x Maria Luiza Gonçalves',processo:'0811270-72.2022.8.19.0014',data:'2026-06-17',hora:'10:00',tipo:'Audiência',local:'5ª Vara Cível — Fórum de Campos dos Goytacazes',notas:'Levar documentação de cobrança atualizada.',criado:'2026-06-10'},
+      {id:'e2',titulo:'Reunião estratégica — Naked Engenharia',processo:'',data:'2026-06-12',hora:'14:00',tipo:'Reunião Cliente',local:'Escritório',notas:'Revisar status de todos os processos contra Recanto das Palmeiras. Estratégia nos recursos de 2º grau.',criado:'2026-06-10'},
+      {id:'e3',titulo:'Protocolo — Embargos de Declaração — Espólio Lério',processo:'0816652-75.2024.8.19.0014',data:'2026-06-20',hora:'09:00',tipo:'Protocolo',local:'Fórum de Campos dos Goytacazes',notas:'Protocolar antes de 17h.',criado:'2026-06-10'},
+      {id:'e4',titulo:'Audiência de instrução — Angela Chacur x Marcos Martins',processo:'0819208-84.2023.8.19.0014',data:'2026-07-08',hora:'14:30',tipo:'Audiência',local:'2º Juizado Especial Cível — Campos dos Goytacazes',notas:'',criado:'2026-06-10'},
+    ],
+    financeiro: [
+      {id:'f1',tipo:'Receita',descricao:'Honorários Naked Engenharia — maio/2026',valor:8500,data:'2026-05-30',processo:'0006950-12.2022.8.19.0014',cliente:'Naked Engenharia Ltda.',status:'Recebido',criado:'2026-05-30'},
+      {id:'f2',tipo:'Receita',descricao:'Honorários Condomínio Recanto das Palmeiras — pacote mensal',valor:4000,data:'2026-05-30',processo:'',cliente:'Condomínio Residencial Recanto das Palmeiras',status:'Recebido',criado:'2026-05-30'},
+      {id:'f3',tipo:'Receita',descricao:'Honorários Angela Chacur Seixas',valor:2500,data:'2026-06-05',processo:'0819208-84.2023.8.19.0014',cliente:'Angela Chacur Seixas',status:'Pendente',criado:'2026-06-05'},
+      {id:'f4',tipo:'Despesa',descricao:'Custas processuais — protocolos junho/2026',valor:680,data:'2026-06-01',processo:'',cliente:'',status:'Pago',criado:'2026-06-01'},
+      {id:'f5',tipo:'Despesa',descricao:'Publicações DJE — junho/2026',valor:120,data:'2026-06-03',processo:'',cliente:'',status:'Pago',criado:'2026-06-03'},
+      {id:'f6',tipo:'Receita',descricao:'Sucumbência recebida — Naked x Ampla Energia',valor:3200,data:'2026-06-08',processo:'0000048-35.2022.8.19.0049',cliente:'Naked Engenharia Ltda.',status:'Recebido',criado:'2026-06-08'},
+      {id:'f7',tipo:'Receita',descricao:'Honorários Espólio Lério Rangel Paes',valor:3500,data:'2026-06-10',processo:'0816652-75.2024.8.19.0014',cliente:'Espólio de Lério Rangel Paes',status:'Pendente',criado:'2026-06-10'},
+    ],
+    documentos: [],
+    config: { advogado: 'Dr. Antonio', oab: 'OAB/RJ 146756', cidade: 'Campos dos Goytacazes, RJ' }
+  };
+}
+
+function loadDB() {
+  try {
+    const s = localStorage.getItem(LS_KEY);
+    if (s) return JSON.parse(s);
+  } catch(e) {}
+  return defaultDB();
+}
+
+
+let DB = loadDB();
+
+// ══════════════════════════════════════════
+// UTILS
+// ══════════════════════════════════════════
+function uid() { return 'x' + Date.now().toString(36) + Math.random().toString(36).slice(2, 6); }
+function today() { return new Date().toISOString().slice(0, 10); }
+function fmtDate(d) { if (!d) return '—'; const [y,m,day] = d.split('-'); return `${day}/${m}/${y}`; }
+function daysUntil(ds) {
+  const t = new Date(); t.setHours(0,0,0,0);
+  const a = new Date(ds + 'T00:00:00');
+  return Math.round((a - t) / 86400000);
+}
+function escHtml(s) { return String(s||'').replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;'); }
+function initials(name) { return (name||'?').split(' ').filter(Boolean).slice(0,2).map(w=>w[0]).join('').toUpperCase().slice(0,2); }
+function brlMoney(v) { return Number(v||0).toLocaleString('pt-BR', {minimumFractionDigits:2, maximumFractionDigits:2}); }
+
+// Badges
+function badgeSituacao(s) {
+  const map = {'Ativo':'badge-green','Arquivado':'badge-gray','Suspenso':'badge-amber','Falhado':'badge-red'};
+  return `<span class="badge ${map[s]||'badge-gray'}">${escHtml(s)}</span>`;
+}
+function badgeTipo(t) {
+  const map = {'Cível':'badge-blue','Trabalhista':'badge-purple','Cumprimento de Sentença':'badge-amber','Execução':'badge-amber','Recursal':'badge-gray','Sucessório':'badge-green','Criminal':'badge-red','Federal':'badge-purple','Fazenda Pública':'badge-gray'};
+  return `<span class="badge ${map[t]||'badge-gray'}" style="font-size:10px">${escHtml(t)}</span>`;
+}
+function badgePriority(p) {
+  const map = {'Alta':'badge-red','Média':'badge-amber','Baixa':'badge-gray'};
+  return `<span class="badge ${map[p]||'badge-gray'}">${escHtml(p)}</span>`;
+}
+function badgeStatus(s) {
+  const map = {'Ativo':'badge-green','Recebido':'badge-green','Pago':'badge-green','Concluída':'badge-green','Concluído':'badge-green','Em andamento':'badge-blue','Pendente':'badge-amber','Arquivado':'badge-gray','Cancelado':'badge-red'};
+  return `<span class="badge ${map[s]||'badge-gray'}">${escHtml(s)}</span>`;
+}
+
+// ══════════════════════════════════════════
+// NAVIGATION
+// ══════════════════════════════════════════
+let currentPage = 'dashboard';
+let procFilter = 'Todos';
+let procSearch = '';
+let procTab = 0;
+
+function updateBadges() {
+  const prUrgent = DB.prazos.filter(p => p.status === 'Pendente' && daysUntil(p.data) <= 7).length;
+  const tarPend = DB.tarefas.filter(t => t.status !== 'Concluída').length;
+  const elP = document.getElementById('badge-prazos');
+  const elT = document.getElementById('badge-tarefas');
+  if (elP) { elP.style.display = prUrgent > 0 ? '' : 'none'; elP.textContent = prUrgent; }
+  if (elT) { elT.style.display = tarPend > 0 ? '' : 'none'; elT.textContent = tarPend; }
+}
+
+function navigate(page) {
+  currentPage = page;
+  procSearch = '';
+  const titles = { dashboard:'Painel', processos:'Processos', clientes:'Clientes', agenda:'Agenda', prazos:'Prazos', tarefas:'Tarefas', financeiro:'Financeiro', relatorios:'Relatórios', documentos:'Documentos' };
+  document.getElementById('page-title').textContent = titles[page] || page;
+  document.querySelectorAll('.nav-item').forEach(el => {
+    el.classList.toggle('active', el.dataset.page === page);
+  });
+  const actions = {
+    processos: `<div class="search-wrap"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/></svg><input class="form-control" id="proc-search" placeholder="Buscar…" oninput="procSearch=this.value;render()" style="width:200px"></div><button class="btn btn-primary btn-sm" onclick="modalProcesso()">+ Novo processo</button>`,
+    clientes: `<button class="btn btn-primary btn-sm" onclick="modalCliente()">+ Novo cliente</button>`,
+    agenda:   `<button class="btn btn-primary btn-sm" onclick="modalAgenda()">+ Novo evento</button>`,
+    prazos:   `<button class="btn btn-primary btn-sm" onclick="modalPrazo()">+ Novo prazo</button>`,
+    tarefas:  `<button class="btn btn-primary btn-sm" onclick="modalTarefa()">+ Nova tarefa</button>`,
+    financeiro:`<button class="btn btn-primary btn-sm" onclick="modalFinanceiro()">+ Lançamento</button>`,
+  };
+  document.getElementById('topbar-actions').innerHTML = actions[page] || '';
+  render();
+  updateBadges();
+}
+
+function render() {
+  const el = document.getElementById('content');
+  const pages = { dashboard: renderDashboard, processos: renderProcessos, clientes: renderClientes, agenda: renderAgenda, prazos: renderPrazos, tarefas: renderTarefas, financeiro: renderFinanceiro, relatorios: renderRelatorios, documentos: renderDocumentos };
+  el.innerHTML = (pages[currentPage] || (() => '<p class="text-muted">Página em construção.</p>'))();
+}
+
+// ══════════════════════════════════════════
+// DASHBOARD
+// ══════════════════════════════════════════
+function renderDashboard() {
+  const ativos = DB.processos.filter(p => p.situacao === 'Ativo').length;
+  const arq = DB.processos.filter(p => p.situacao === 'Arquivado').length;
+  const prUrgent = DB.prazos.filter(p => p.status === 'Pendente' && daysUntil(p.data) <= 7);
+  const tarPend = DB.tarefas.filter(t => t.status !== 'Concluída').length;
+  const receitas = DB.financeiro.filter(f => f.tipo === 'Receita' && f.status !== 'Cancelado').reduce((s,f) => s + (f.valor||0), 0);
+  const despesas = DB.financeiro.filter(f => f.tipo === 'Despesa').reduce((s,f) => s + (f.valor||0), 0);
+  const pendFin = DB.financeiro.filter(f => f.tipo === 'Receita' && f.status === 'Pendente').reduce((s,f) => s + (f.valor||0), 0);
+  const proxPrazos = [...DB.prazos].filter(p => p.status === 'Pendente').sort((a,b) => a.data.localeCompare(b.data)).slice(0, 6);
+  const proxAgenda = [...DB.agenda].sort((a,b) => (a.data+a.hora).localeCompare(b.data+b.hora)).slice(0, 5);
+  const proxTarefas = [...DB.tarefas].filter(t => t.status !== 'Concluída').sort((a,b) => (a.prazo||'9').localeCompare(b.prazo||'9')).slice(0, 5);
+
+  return `
+<div class="grid-4 mb-20">
+  <div class="metric-card"><div class="metric-label">Processos ativos</div><div class="metric-value">${ativos}</div><div class="metric-sub">${arq} arquivados · ${DB.processos.length} total</div></div>
+  <div class="metric-card"><div class="metric-label">Prazos urgentes</div><div class="metric-value" style="color:${prUrgent.length?'var(--red)':'inherit'}">${prUrgent.length}</div><div class="metric-sub">próximos 7 dias</div></div>
+  <div class="metric-card"><div class="metric-label">Tarefas abertas</div><div class="metric-value">${tarPend}</div><div class="metric-sub">${DB.tarefas.filter(t=>t.status==='Em andamento').length} em andamento</div></div>
+  <div class="metric-card"><div class="metric-label">Saldo financeiro</div><div class="metric-value" style="font-size:20px;color:${receitas-despesas>=0?'var(--green)':'var(--red)'}">R$ ${brlMoney(receitas-despesas)}</div><div class="metric-sub" style="color:${pendFin>0?'var(--amber)':'inherit'}">R$ ${brlMoney(pendFin)} a receber</div></div>
+</div>
+
+${prUrgent.length ? `<div class="alert alert-danger mb-16">⚠️ <strong>${prUrgent.length} prazo(s) urgente(s)</strong> nos próximos 7 dias: ${prUrgent.slice(0,3).map(p=>`<strong>${p.titulo}</strong> (${fmtDate(p.data)})`).join(', ')}${prUrgent.length>3?'…':''}.</div>` : ''}
+
+<div class="grid-2">
+  <div class="card">
+    <div class="section-title">Prazos próximos <button class="btn btn-sm btn-ghost" onclick="navigate('prazos')">Ver todos →</button></div>
+    ${proxPrazos.length ? proxPrazos.map(p => {
+      const d = daysUntil(p.data);
+      const cls = d < 0 ? 'dot-gray' : d <= 2 ? 'dot-red' : d <= 7 ? 'dot-amber' : 'dot-blue';
+      const lbl = d < 0 ? `${Math.abs(d)}d atrás` : d === 0 ? 'Hoje' : `em ${d}d`;
+      return `<div class="list-item"><div class="list-item-dot ${cls}"></div><div style="flex:1;min-width:0"><div class="truncate" style="font-size:13px;font-weight:500">${escHtml(p.titulo)}</div><div class="mono truncate">${escHtml(p.processo||'—')}</div></div><span class="badge ${d<=2?'badge-red':d<=7?'badge-amber':'badge-gray'}" style="flex-shrink:0">${lbl}</span></div>`;
+    }).join('') : '<div class="empty"><p>Nenhum prazo pendente</p></div>'}
+  </div>
+
+  <div class="card">
+    <div class="section-title">Agenda <button class="btn btn-sm btn-ghost" onclick="navigate('agenda')">Ver agenda →</button></div>
+    ${proxAgenda.length ? proxAgenda.map(e => `<div class="list-item"><div class="list-item-dot dot-blue"></div><div style="flex:1;min-width:0"><div class="truncate" style="font-size:13px;font-weight:500">${escHtml(e.titulo)}</div><div class="mono">${fmtDate(e.data)} ${e.hora} — ${escHtml(e.local||'—')}</div></div><span class="badge badge-blue" style="flex-shrink:0;font-size:10px">${escHtml(e.tipo)}</span></div>`).join('') : '<div class="empty"><p>Nenhum evento</p></div>'}
+  </div>
+
+  <div class="card">
+    <div class="section-title">Tarefas abertas <button class="btn btn-sm btn-ghost" onclick="navigate('tarefas')">Ver todas →</button></div>
+    ${proxTarefas.length ? proxTarefas.map(t => `<div class="list-item"><div class="list-item-dot ${t.prioridade==='Alta'?'dot-red':t.prioridade==='Média'?'dot-amber':'dot-blue'}"></div><div style="flex:1;min-width:0"><div class="truncate" style="font-size:13px;font-weight:500">${escHtml(t.titulo)}</div><div class="mono">${t.prazo?fmtDate(t.prazo):''}</div></div>${badgeStatus(t.status)}</div>`).join('') : '<div class="empty"><p>Nenhuma tarefa aberta</p></div>'}
+  </div>
+
+  <div class="card">
+    <div class="section-title">Lançamentos recentes <button class="btn btn-sm btn-ghost" onclick="navigate('financeiro')">Ver todos →</button></div>
+    ${[...DB.financeiro].sort((a,b)=>b.data.localeCompare(a.data)).slice(0,6).map(f=>`<div class="list-item"><div class="list-item-dot ${f.tipo==='Receita'?'dot-green':'dot-red'}"></div><div style="flex:1;min-width:0"><div class="truncate" style="font-size:13px">${escHtml(f.descricao)}</div><div class="mono">${fmtDate(f.data)}</div></div><span class="${f.tipo==='Receita'?'fin-pos':'fin-neg'}" style="flex-shrink:0;font-size:13px">${f.tipo==='Receita'?'+':'−'} R$ ${brlMoney(f.valor)}</span></div>`).join('')}
+  </div>
+</div>`;
+}
+
+// ══════════════════════════════════════════
+// PROCESSOS
+// ══════════════════════════════════════════
+function renderProcessos() {
+  let lista = [...DB.processos];
+  const q = (procSearch||'').toLowerCase();
+  if (q) lista = lista.filter(p => p.numero.toLowerCase().includes(q) || p.partes.toLowerCase().includes(q) || p.cliente.toLowerCase().includes(q) || p.tipo.toLowerCase().includes(q) || p.vara.toLowerCase().includes(q));
+  if (procFilter && procFilter !== 'Todos') lista = lista.filter(p => p.situacao === procFilter);
+
+  const counts = { Todos: DB.processos.length, Ativo: DB.processos.filter(p=>p.situacao==='Ativo').length, Arquivado: DB.processos.filter(p=>p.situacao==='Arquivado').length };
+
+  return `
+<div class="filter-pills">
+  ${['Todos','Ativo','Arquivado'].map(f=>`<button class="pill ${procFilter===f?'active':''}" onclick="procFilter='${f}';render()">${f} (${counts[f]||0})</button>`).join('')}
+  <span class="text-muted text-xs" style="margin-left:auto;align-self:center">${lista.length} resultado(s)</span>
+</div>
+<div class="card" style="padding:0">
+<div class="table-wrap">
+<table>
+<thead><tr>
+  <th style="width:185px">Número CNJ</th>
+  <th>Partes / Cliente</th>
+  <th style="width:110px">Tipo</th>
+  <th>Vara / Tribunal</th>
+  <th style="width:90px">Instância</th>
+  <th style="width:90px">Situação</th>
+  <th style="width:76px">Ações</th>
+</tr></thead>
+<tbody>
+${lista.length ? lista.map(p => `<tr>
+  <td>
+    <div class="mono" style="font-size:11px">${escHtml(p.numero)}</div>
+    ${p.polo ? `<span class="badge badge-gray" style="font-size:9px;margin-top:2px">${escHtml(p.polo)}</span>` : ''}
+  </td>
+  <td style="max-width:260px">
+    <div class="truncate" style="font-size:13px" title="${escHtml(p.partes)}">${escHtml(p.partes)}</div>
+    ${p.cliente ? `<div class="text-xs text-muted truncate">${escHtml(p.cliente)}</div>` : ''}
+  </td>
+  <td>${badgeTipo(p.tipo)}</td>
+  <td style="max-width:200px">
+    <div class="truncate text-sm" title="${escHtml(p.vara)}">${escHtml(p.vara||'—')}</div>
+    <div class="text-xs text-muted">${escHtml(p.tribunal)}</div>
+  </td>
+  <td><span class="badge badge-gray" style="font-size:10px">${escHtml(p.instancia)}</span></td>
+  <td>${badgeSituacao(p.situacao)}</td>
+  <td><div class="action-row">
+    <button class="btn btn-icon btn-ghost" onclick="modalProcesso('${p.id}')" title="Editar">✏️</button>
+    <button class="btn btn-icon btn-ghost" onclick="verProcesso('${p.id}')" title="Detalhes">🔍</button>
+    <button class="btn btn-icon btn-ghost" onclick="delItem('processos','${p.id}')" title="Excluir">🗑️</button>
+  </div></td>
+</tr>`).join('') : `<tr><td colspan="7"><div class="empty"><p>Nenhum processo encontrado.</p></div></td></tr>`}
+</tbody>
+</table>
+</div>
+</div>`;
+}
+
+function verProcesso(id) {
+  const p = DB.processos.find(x => x.id === id);
+  if (!p) return;
+  const prazos = DB.prazos.filter(x => x.processo === p.numero);
+  const tarefas = DB.tarefas.filter(x => x.processo === p.numero);
+  const fin = DB.financeiro.filter(x => x.processo === p.numero);
+  showModal(`<div class="modal-header"><h3>Detalhes do processo</h3><button class="btn btn-sm btn-ghost" onclick="closeModal()">✕</button></div>
+<div class="modal-body">
+  <div class="detail-header">
+    <div>
+      <div class="mono mb-12">${escHtml(p.numero)}</div>
+      <div style="font-size:14px;font-weight:600;margin-bottom:6px">${escHtml(p.partes)}</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">${badgeTipo(p.tipo)} ${badgeSituacao(p.situacao)} <span class="badge badge-gray">${escHtml(p.instancia)}</span></div>
+    </div>
+  </div>
+  <div class="detail-grid">
+    <div class="detail-field"><label>Tribunal</label><p>${escHtml(p.tribunal)}</p></div>
+    <div class="detail-field"><label>Vara</label><p>${escHtml(p.vara||'—')}</p></div>
+    <div class="detail-field"><label>Comarca</label><p>${escHtml(p.comarca||'—')}</p></div>
+    <div class="detail-field"><label>Polo</label><p>${escHtml(p.polo||'—')}</p></div>
+    <div class="detail-field"><label>Cliente</label><p>${escHtml(p.cliente||'—')}</p></div>
+    <div class="detail-field"><label>Valor da causa</label><p>R$ ${brlMoney(p.valor)}</p></div>
+  </div>
+  ${p.notas ? `<div class="nota-box">${escHtml(p.notas)}</div>` : ''}
+  ${prazos.length ? `<div class="divider"></div><div class="section-title">Prazos vinculados</div>${prazos.map(pr=>`<div class="list-item"><div class="list-item-dot ${daysUntil(pr.data)<=3?'dot-red':daysUntil(pr.data)<=7?'dot-amber':'dot-blue'}"></div><div style="flex:1"><span style="font-size:13px">${escHtml(pr.titulo)}</span> — <span class="mono">${fmtDate(pr.data)}</span></div>${badgePriority(pr.prioridade)}</div>`).join('')}` : ''}
+  ${tarefas.length ? `<div class="divider"></div><div class="section-title">Tarefas vinculadas</div>${tarefas.map(t=>`<div class="list-item"><div class="list-item-dot ${t.prioridade==='Alta'?'dot-red':'dot-blue'}"></div><div style="flex:1"><span style="font-size:13px">${escHtml(t.titulo)}</span></div>${badgeStatus(t.status)}</div>`).join('')}` : ''}
+  ${fin.length ? `<div class="divider"></div><div class="section-title">Lançamentos financeiros</div>${fin.map(f=>`<div class="list-item"><div class="list-item-dot ${f.tipo==='Receita'?'dot-green':'dot-red'}"></div><div style="flex:1"><span style="font-size:13px">${escHtml(f.descricao)}</span></div><span class="${f.tipo==='Receita'?'fin-pos':'fin-neg'}">R$ ${brlMoney(f.valor)}</span></div>`).join('')}` : ''}
+</div>
+<div class="modal-footer"><button class="btn" onclick="closeModal()">Fechar</button><button class="btn btn-primary" onclick="closeModal();modalProcesso('${id}')">Editar</button></div>`);
+}
+
+// ══════════════════════════════════════════
+// CLIENTES
+// ══════════════════════════════════════════
+function renderClientes() {
+  return `<div class="grid-2">
+${DB.clientes.map(c => {
+  const nProc = DB.processos.filter(p => p.cliente === c.nome).length;
+  return `<div class="card">
+  <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+    <div class="avatar" style="width:42px;height:42px;font-size:13px">${initials(c.nome)}</div>
+    <div style="flex:1;min-width:0">
+      <div style="font-weight:600;font-size:14px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${escHtml(c.nome)}</div>
+      <div class="text-sm text-muted">${c.tipo === 'PJ' ? 'Pessoa Jurídica' : 'Pessoa Física'} · ${nProc} processo(s)</div>
+    </div>
+    <div class="action-row">
+      <button class="btn btn-icon btn-ghost" onclick="modalCliente('${c.id}')" title="Editar">✏️</button>
+      <button class="btn btn-icon btn-ghost" onclick="delItem('clientes','${c.id}')" title="Excluir">🗑️</button>
+    </div>
+  </div>
+  ${c.cpfcnpj?`<div class="text-sm text-muted mb-12">📋 ${escHtml(c.cpfcnpj)}</div>`:''}
+  ${c.email?`<div class="text-sm text-muted mb-12">✉️ ${escHtml(c.email)}</div>`:''}
+  ${c.tel?`<div class="text-sm text-muted mb-12">📞 ${escHtml(c.tel)}</div>`:''}
+  ${c.endereco?`<div class="text-sm text-muted mb-12">📍 ${escHtml(c.endereco)}</div>`:''}
+  ${c.notas?`<div class="nota-box">${escHtml(c.notas)}</div>`:''}
+</div>`;
+}).join('')}
+</div>`;
+}
+
+// ══════════════════════════════════════════
+// AGENDA
+// ══════════════════════════════════════════
+function renderAgenda() {
+  const now = new Date();
+  const ano = now.getFullYear(), mes = now.getMonth();
+  const meses = ['Janeiro','Fevereiro','Março','Abril','Maio','Junho','Julho','Agosto','Setembro','Outubro','Novembro','Dezembro'];
+  const semana = ['Dom','Seg','Ter','Qua','Qui','Sex','Sáb'];
+  const primeiro = new Date(ano, mes, 1).getDay();
+  const ultimo = new Date(ano, mes+1, 0).getDate();
+  const todayN = now.getDate();
+
+  let cells = semana.map(d => `<div class="cal-header">${d}</div>`).join('');
+  for (let i = 0; i < primeiro; i++) {
+    cells += `<div class="cal-cell other"><div class="cal-day-num">${new Date(ano,mes,1-primeiro+i).getDate()}</div></div>`;
+  }
+  for (let d = 1; d <= ultimo; d++) {
+    const ds = `${ano}-${String(mes+1).padStart(2,'0')}-${String(d).padStart(2,'0')}`;
+    const evs = DB.agenda.filter(e => e.data === ds);
+    const prs = DB.prazos.filter(p => p.data === ds && p.status === 'Pendente');
+    const isT = d === todayN;
+    cells += `<div class="cal-cell ${isT?'today':''}">
+      <div class="cal-day-num">${d}</div>
+      ${evs.map(e=>`<div class="cal-evt cal-evt-agenda" title="${escHtml(e.titulo)}">${e.hora} ${escHtml(e.titulo.slice(0,18))}</div>`).join('')}
+      ${prs.map(p=>`<div class="cal-evt cal-evt-prazo" title="${escHtml(p.titulo)}">⚠ ${escHtml(p.titulo.slice(0,16))}</div>`).join('')}
+    </div>`;
+  }
+
+  const sorted = [...DB.agenda].sort((a,b) => (a.data+a.hora).localeCompare(b.data+b.hora));
+
+  return `<div class="card mb-20">
+  <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+    <h2 style="font-size:15px;font-weight:600">${meses[mes]} ${ano}</h2>
+    <div style="display:flex;gap:6px"><span class="badge badge-blue">● Evento</span><span class="badge badge-red">● Prazo</span></div>
+  </div>
+  <div class="cal-wrap">${cells}</div>
+</div>
+<div class="card">
+  <div class="section-title">Todos os eventos</div>
+  ${sorted.length ? sorted.map(e => `<div class="list-item">
+    <div class="list-item-dot dot-blue"></div>
+    <div style="flex:1;min-width:0">
+      <div class="truncate" style="font-size:13px;font-weight:500">${escHtml(e.titulo)}</div>
+      <div class="mono">${fmtDate(e.data)} às ${e.hora} · ${escHtml(e.local||'—')}</div>
+      ${e.notas?`<div class="text-xs text-muted">${escHtml(e.notas)}</div>`:''}
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">
+      <span class="badge badge-blue" style="font-size:10px">${escHtml(e.tipo)}</span>
+      <div class="action-row">
+        <button class="btn btn-icon btn-ghost" onclick="modalAgenda('${e.id}')">✏️</button>
+        <button class="btn btn-icon btn-ghost" onclick="delItem('agenda','${e.id}')">🗑️</button>
+      </div>
+    </div>
+  </div>`).join('') : '<div class="empty"><p>Nenhum evento cadastrado.</p></div>'}
+</div>`;
+}
+
+// ══════════════════════════════════════════
+// PRAZOS
+// ══════════════════════════════════════════
+function renderPrazos() {
+  const pend = [...DB.prazos].filter(p => p.status !== 'Concluído').sort((a,b) => a.data.localeCompare(b.data));
+  const conc = DB.prazos.filter(p => p.status === 'Concluído');
+  return `
+<div class="card mb-16">
+  <div class="section-title">Prazos ativos (${pend.length})</div>
+  ${pend.length ? pend.map(p => {
+    const d = daysUntil(p.data);
+    const dcls = d < 0 ? 'dot-gray' : d <= 2 ? 'dot-red' : d <= 7 ? 'dot-amber' : 'dot-blue';
+    const lbl = d < 0 ? `${Math.abs(d)}d vencido` : d === 0 ? 'Vence hoje' : `em ${d}d`;
+    return `<div class="list-item">
+      <div class="list-item-dot ${dcls}"></div>
+      <div style="flex:1;min-width:0">
+        <div style="font-size:13px;font-weight:500">${escHtml(p.titulo)}</div>
+        <div class="mono truncate">${escHtml(p.processo||'—')} · ${escHtml(p.tipo)} · ${fmtDate(p.data)} ${p.hora}</div>
+        ${p.notas?`<div class="text-xs text-muted">${escHtml(p.notas)}</div>`:''}
+      </div>
+      <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">
+        <span class="badge ${d<0?'badge-red':d<=2?'badge-red':d<=7?'badge-amber':'badge-gray'}">${lbl}</span>
+        ${badgePriority(p.prioridade)}
+        <div class="action-row">
+          <button class="btn btn-sm btn-success" onclick="concludeItem('prazos','${p.id}')" title="Concluir">✓</button>
+          <button class="btn btn-icon btn-ghost" onclick="modalPrazo('${p.id}')">✏️</button>
+          <button class="btn btn-icon btn-ghost" onclick="delItem('prazos','${p.id}')">🗑️</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('') : '<div class="empty"><p>Nenhum prazo pendente.</p></div>'}
+</div>
+${conc.length ? `<div class="card"><div class="section-title text-muted">Concluídos (${conc.length})</div>${conc.map(p=>`<div class="list-item" style="opacity:.5"><div class="list-item-dot dot-green"></div><div style="flex:1"><div style="font-size:13px;text-decoration:line-through">${escHtml(p.titulo)}</div><div class="mono">${fmtDate(p.data)}</div></div></div>`).join('')}</div>` : ''}`;
+}
+
+// ══════════════════════════════════════════
+// TAREFAS
+// ══════════════════════════════════════════
+function renderTarefas() {
+  const pend = DB.tarefas.filter(t => t.status === 'Pendente').sort((a,b) => (a.prazo||'9').localeCompare(b.prazo||'9'));
+  const and = DB.tarefas.filter(t => t.status === 'Em andamento');
+  const conc = DB.tarefas.filter(t => t.status === 'Concluída');
+  return `
+<div class="grid-3 mb-16">
+  <div class="metric-card"><div class="metric-label">Pendentes</div><div class="metric-value">${pend.length}</div></div>
+  <div class="metric-card"><div class="metric-label">Em andamento</div><div class="metric-value" style="color:var(--accent)">${and.length}</div></div>
+  <div class="metric-card"><div class="metric-label">Concluídas</div><div class="metric-value" style="color:var(--green)">${conc.length}</div></div>
+</div>
+<div class="card mb-16">
+  <div class="section-title">Em andamento & pendentes (${and.length + pend.length})</div>
+  ${[...and, ...pend].length ? [...and, ...pend].map(t => `<div class="list-item">
+    <div class="list-item-dot ${t.prioridade==='Alta'?'dot-red':t.prioridade==='Média'?'dot-amber':'dot-blue'}"></div>
+    <div style="flex:1;min-width:0">
+      <div style="font-size:13px;font-weight:500">${escHtml(t.titulo)}</div>
+      <div class="mono">${t.processo?escHtml(t.processo)+' · ':''}${t.prazo?'prazo: '+fmtDate(t.prazo):'sem prazo'} · ${escHtml(t.responsavel||'')}</div>
+      ${t.notas?`<div class="text-xs text-muted">${escHtml(t.notas)}</div>`:''}
+    </div>
+    <div style="display:flex;flex-direction:column;align-items:flex-end;gap:4px;flex-shrink:0">
+      ${badgeStatus(t.status)} ${badgePriority(t.prioridade)}
+      <div class="action-row">
+        <button class="btn btn-sm btn-success" onclick="concludeItem('tarefas','${t.id}')" title="Concluir">✓</button>
+        <button class="btn btn-icon btn-ghost" onclick="modalTarefa('${t.id}')">✏️</button>
+        <button class="btn btn-icon btn-ghost" onclick="delItem('tarefas','${t.id}')">🗑️</button>
+      </div>
+    </div>
+  </div>`).join('') : '<div class="empty"><p>Nenhuma tarefa aberta.</p></div>'}
+</div>
+${conc.length ? `<div class="card"><div class="section-title text-muted">Concluídas (${conc.length})</div>${conc.map(t=>`<div class="list-item" style="opacity:.5"><div class="list-item-dot dot-green"></div><div style="flex:1"><div style="font-size:13px;text-decoration:line-through">${escHtml(t.titulo)}</div></div></div>`).join('')}</div>` : ''}`;
+}
+
+// ══════════════════════════════════════════
+// FINANCEIRO
+// ══════════════════════════════════════════
+function renderFinanceiro() {
+  const rec = DB.financeiro.filter(f => f.tipo === 'Receita' && f.status !== 'Cancelado').reduce((s,f) => s+(f.valor||0), 0);
+  const des = DB.financeiro.filter(f => f.tipo === 'Despesa').reduce((s,f) => s+(f.valor||0), 0);
+  const pend = DB.financeiro.filter(f => f.tipo === 'Receita' && f.status === 'Pendente').reduce((s,f) => s+(f.valor||0), 0);
+  const sorted = [...DB.financeiro].sort((a,b) => b.data.localeCompare(a.data));
+  return `
+<div class="grid-3 mb-16">
+  <div class="metric-card"><div class="metric-label">Receitas</div><div class="metric-value fin-pos">R$ ${brlMoney(rec)}</div></div>
+  <div class="metric-card"><div class="metric-label">Despesas</div><div class="metric-value fin-neg">R$ ${brlMoney(des)}</div></div>
+  <div class="metric-card"><div class="metric-label">Saldo</div><div class="metric-value" style="color:${rec-des>=0?'var(--green)':'var(--red)'}">R$ ${brlMoney(rec-des)}</div></div>
+</div>
+${pend > 0 ? `<div class="alert alert-warn mb-16">⏳ R$ ${brlMoney(pend)} em receitas pendentes de recebimento.</div>` : ''}
+<div class="card" style="padding:0">
+<div class="table-wrap">
+<table>
+<thead><tr><th>Descrição</th><th>Tipo</th><th style="width:120px">Valor</th><th style="width:100px">Data</th><th>Cliente</th><th>Status</th><th style="width:70px">Ações</th></tr></thead>
+<tbody>
+${sorted.map(f => `<tr>
+  <td><div style="font-size:13px">${escHtml(f.descricao)}</div>${f.processo?`<div class="mono">${escHtml(f.processo)}</div>`:''}</td>
+  <td><span class="badge ${f.tipo==='Receita'?'badge-green':'badge-red'}">${f.tipo}</span></td>
+  <td class="${f.tipo==='Receita'?'fin-pos':'fin-neg'}">${f.tipo==='Receita'?'+':'−'} R$ ${brlMoney(f.valor)}</td>
+  <td class="mono">${fmtDate(f.data)}</td>
+  <td class="text-sm">${escHtml(f.cliente||'—')}</td>
+  <td>${badgeStatus(f.status)}</td>
+  <td><div class="action-row">
+    <button class="btn btn-icon btn-ghost" onclick="modalFinanceiro('${f.id}')">✏️</button>
+    <button class="btn btn-icon btn-ghost" onclick="delItem('financeiro','${f.id}')">🗑️</button>
+  </div></td>
+</tr>`).join('')}
+</tbody>
+</table>
+</div>
+</div>`;
+}
+
+// ══════════════════════════════════════════
+// RELATÓRIOS
+// ══════════════════════════════════════════
+function renderRelatorios() {
+  const total = DB.processos.length;
+  const ativos = DB.processos.filter(p=>p.situacao==='Ativo').length;
+  const arq = DB.processos.filter(p=>p.situacao==='Arquivado').length;
+
+  // Por tipo
+  const byTipo = {}; DB.processos.forEach(p=>{byTipo[p.tipo]=(byTipo[p.tipo]||0)+1;});
+  const tipoList = Object.entries(byTipo).sort((a,b)=>b[1]-a[1]);
+
+  // Por tribunal
+  const byTrib = {}; DB.processos.forEach(p=>{byTrib[p.tribunal]=(byTrib[p.tribunal]||0)+1;});
+  const tribList = Object.entries(byTrib).sort((a,b)=>b[1]-a[1]);
+
+  // Por instância
+  const byInst = {}; DB.processos.forEach(p=>{byInst[p.instancia]=(byInst[p.instancia]||0)+1;});
+
+  // Top clientes
+  const byCliente = {}; DB.processos.filter(p=>p.cliente).forEach(p=>{byCliente[p.cliente]=(byCliente[p.cliente]||0)+1;});
+  const topClientes = Object.entries(byCliente).sort((a,b)=>b[1]-a[1]).slice(0,8);
+
+  // Financeiro
+  const rec = DB.financeiro.filter(f=>f.tipo==='Receita'&&f.status!=='Cancelado').reduce((s,f)=>s+(f.valor||0),0);
+  const des = DB.financeiro.filter(f=>f.tipo==='Despesa').reduce((s,f)=>s+(f.valor||0),0);
+
+  return `
+<div class="grid-4 mb-20">
+  <div class="metric-card"><div class="metric-label">Total processos</div><div class="metric-value">${total}</div></div>
+  <div class="metric-card"><div class="metric-label">Ativos</div><div class="metric-value" style="color:var(--accent)">${ativos}</div></div>
+  <div class="metric-card"><div class="metric-label">Arquivados</div><div class="metric-value" style="color:var(--text2)">${arq}</div></div>
+  <div class="metric-card"><div class="metric-label">Clientes</div><div class="metric-value">${DB.clientes.length}</div></div>
+</div>
+<div class="grid-2">
+  <div class="card">
+    <div class="section-title">Distribuição por tipo</div>
+    ${tipoList.map(([k,v])=>`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:13px">${escHtml(k)}</span><span class="text-sm text-muted">${v}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${Math.round(v/total*100)}%"></div></div></div>`).join('')}
+  </div>
+  <div class="card">
+    <div class="section-title">Distribuição por tribunal</div>
+    ${tribList.map(([k,v])=>`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:13px">${escHtml(k)}</span><span class="text-sm text-muted">${v}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${Math.round(v/total*100)}%;background:var(--green)"></div></div></div>`).join('')}
+  </div>
+  <div class="card">
+    <div class="section-title">Por instância</div>
+    ${Object.entries(byInst).map(([k,v])=>`<div style="margin-bottom:10px"><div style="display:flex;justify-content:space-between;margin-bottom:3px"><span style="font-size:13px">${escHtml(k)}</span><span class="text-sm text-muted">${v}</span></div><div class="progress-bar"><div class="progress-fill" style="width:${Math.round(v/total*100)}%;background:var(--purple)"></div></div></div>`).join('')}
+    <div class="divider"></div>
+    <div class="section-title">Financeiro (todos os lançamentos)</div>
+    <div style="display:flex;gap:16px">
+      <div class="metric-card" style="flex:1"><div class="metric-label">Receitas</div><div style="font-size:16px;font-weight:600" class="fin-pos">R$ ${brlMoney(rec)}</div></div>
+      <div class="metric-card" style="flex:1"><div class="metric-label">Despesas</div><div style="font-size:16px;font-weight:600" class="fin-neg">R$ ${brlMoney(des)}</div></div>
+    </div>
+  </div>
+  <div class="card">
+    <div class="section-title">Top clientes por processos</div>
+    ${topClientes.map(([n,v])=>`<div class="list-item" style="padding:7px 0">
+      <div class="avatar" style="width:30px;height:30px;font-size:11px">${initials(n)}</div>
+      <div style="flex:1;min-width:0"><div class="truncate" style="font-size:13px;font-weight:500">${escHtml(n)}</div></div>
+      <span class="badge badge-blue">${v}</span>
+    </div>`).join('')}
+  </div>
+</div>`;
+}
+
+// ══════════════════════════════════════════
+// DOCUMENTOS
+// ══════════════════════════════════════════
+function renderDocumentos() {
+  return `<div class="card">
+    <div class="section-title">Documentos & Minutas</div>
+    <div class="alert alert-info">💡 Módulo de geração de documentos — em breve. Aqui você poderá gerar petições, procurações, memorandos e cálculos em PDF diretamente vinculados aos processos.</div>
+    <div class="empty"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg><p>Nenhum documento gerado ainda.</p></div>
+  </div>`;
+}
+
+// ══════════════════════════════════════════
+// MODALS
+// ══════════════════════════════════════════
+function showModal(html) { document.getElementById('modal-root').innerHTML = `<div class="modal-overlay" onclick="if(event.target===this)closeModal()">${html}</div>`; }
+function closeModal() { document.getElementById('modal-root').innerHTML = ''; }
+
+function buildModal(titulo, body, footer, large) {
+  return `<div class="modal${large?' modal-lg':''}">
+    <div class="modal-header"><h3>${escHtml(titulo)}</h3><button class="btn btn-sm btn-ghost" onclick="closeModal()">✕</button></div>
+    <div class="modal-body">${body}</div>
+    <div class="modal-footer">${footer}</div>
+  </div>`;
+}
+
+// PROCESSO
+function modalProcesso(id) {
+  const p = id ? DB.processos.find(x=>x.id===id) : {id:'',numero:'',partes:'',tribunal:'TJRJ',vara:'',comarca:'Campos dos Goytacazes',instancia:'1º Grau',situacao:'Ativo',tipo:'Cível',cliente:'',polo:'',valor:0,notas:''};
+  const clOpts = DB.clientes.map(c=>`<option value="${escHtml(c.nome)}" ${p.cliente===c.nome?'selected':''}>${escHtml(c.nome)}</option>`).join('');
+  showModal(buildModal(id?'Editar processo':'Novo processo', `
+    <div class="form-group"><label class="form-label">Número CNJ *</label><input class="form-control" id="pf-num" value="${escHtml(p.numero)}" placeholder="0000000-00.0000.0.00.0000"></div>
+    <div class="form-group"><label class="form-label">Partes *</label><input class="form-control" id="pf-partes" value="${escHtml(p.partes)}" placeholder="Autor/Exequente x Réu/Executado"></div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Tribunal</label><select class="form-control" id="pf-trib"><option ${p.tribunal==='TJRJ'?'selected':''}>TJRJ</option><option ${p.tribunal==='TRT1'?'selected':''}>TRT1</option><option ${p.tribunal==='TRF2'?'selected':''}>TRF2</option><option ${p.tribunal==='STJ'?'selected':''}>STJ</option><option ${p.tribunal==='TST'?'selected':''}>TST</option><option ${p.tribunal==='STF'?'selected':''}>STF</option></select></div>
+      <div class="form-group"><label class="form-label">Vara / Câmara</label><input class="form-control" id="pf-vara" value="${escHtml(p.vara)}"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Comarca</label><input class="form-control" id="pf-comarca" value="${escHtml(p.comarca)}"></div>
+      <div class="form-group"><label class="form-label">Instância</label><select class="form-control" id="pf-inst"><option ${p.instancia==='1º Grau'?'selected':''}>1º Grau</option><option ${p.instancia==='2º Grau'?'selected':''}>2º Grau</option><option ${p.instancia==='Superior'?'selected':''}>Superior</option></select></div>
+    </div>
+    <div class="form-row-3">
+      <div class="form-group"><label class="form-label">Situação</label><select class="form-control" id="pf-sit"><option ${p.situacao==='Ativo'?'selected':''}>Ativo</option><option ${p.situacao==='Arquivado'?'selected':''}>Arquivado</option><option ${p.situacao==='Suspenso'?'selected':''}>Suspenso</option><option ${p.situacao==='Falhado'?'selected':''}>Falhado</option></select></div>
+      <div class="form-group"><label class="form-label">Tipo</label><select class="form-control" id="pf-tipo"><option ${p.tipo==='Cível'?'selected':''}>Cível</option><option ${p.tipo==='Trabalhista'?'selected':''}>Trabalhista</option><option ${p.tipo==='Cumprimento de Sentença'?'selected':''}>Cumprimento de Sentença</option><option ${p.tipo==='Execução'?'selected':''}>Execução</option><option ${p.tipo==='Recursal'?'selected':''}>Recursal</option><option ${p.tipo==='Sucessório'?'selected':''}>Sucessório</option><option ${p.tipo==='Criminal'?'selected':''}>Criminal</option><option ${p.tipo==='Federal'?'selected':''}>Federal</option><option ${p.tipo==='Fazenda Pública'?'selected':''}>Fazenda Pública</option></select></div>
+      <div class="form-group"><label class="form-label">Polo</label><select class="form-control" id="pf-polo"><option value="">—</option><option ${p.polo==='Autor'?'selected':''}>Autor</option><option ${p.polo==='Réu'?'selected':''}>Réu</option><option ${p.polo==='Exequente'?'selected':''}>Exequente</option><option ${p.polo==='Executado'?'selected':''}>Executado</option><option ${p.polo==='Requerente'?'selected':''}>Requerente</option></select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label class="form-label">Cliente</label><select class="form-control" id="pf-cli"><option value="">— nenhum —</option>${clOpts}</select></div>
+      <div class="form-group"><label class="form-label">Valor da causa (R$)</label><input class="form-control" type="number" id="pf-val" value="${p.valor||0}" min="0" step="0.01"></div>
+    </div>
+    <div class="form-group"><label class="form-label">Notas / Histórico</label><textarea class="form-control" id="pf-notas" rows="3">${escHtml(p.notas)}</textarea></div>`,
+  `<button class="btn" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="saveProcesso('${id||''}')">Salvar</button>`));
+}
+function saveProcesso(id) {
+  const obj = { id:id||uid(), numero:document.getElementById('pf-num').value.trim(), partes:document.getElementById('pf-partes').value.trim(), tribunal:document.getElementById('pf-trib').value, vara:document.getElementById('pf-vara').value.trim(), comarca:document.getElementById('pf-comarca').value.trim(), instancia:document.getElementById('pf-inst').value, situacao:document.getElementById('pf-sit').value, tipo:document.getElementById('pf-tipo').value, polo:document.getElementById('pf-polo').value, cliente:document.getElementById('pf-cli').value, valor:parseFloat(document.getElementById('pf-val').value)||0, notas:document.getElementById('pf-notas').value.trim(), criado: id ? (DB.processos.find(x=>x.id===id)||{}).criado||today() : today() };
+  if (!obj.numero) return alert('Número CNJ é obrigatório.');
+  if (id) { const i = DB.processos.findIndex(x=>x.id===id); if(i>=0) DB.processos[i]=obj; } else DB.processos.push(obj);
+  saveDB(); closeModal(); render(); updateBadges();
+}
+
+// CLIENTE
+function modalCliente(id) {
+  const c = id ? DB.clientes.find(x=>x.id===id) : {id:'',nome:'',tipo:'PF',cpfcnpj:'',email:'',tel:'',endereco:'',notas:''};
+  showModal(buildModal(id?'Editar cliente':'Novo cliente', `
+    <div class="form-row"><div class="form-group"><label class="form-label">Nome *</label><input class="form-control" id="cf-nome" value="${escHtml(c.nome)}"></div><div class="form-group"><label class="form-label">Tipo</label><select class="form-control" id="cf-tipo"><option ${c.tipo==='PF'?'selected':''}>PF</option><option ${c.tipo==='PJ'?'selected':''}>PJ</option></select></div></div>
+    <div class="form-row"><div class="form-group"><label class="form-label">CPF / CNPJ</label><input class="form-control" id="cf-doc" value="${escHtml(c.cpfcnpj)}"></div><div class="form-group"><label class="form-label">Telefone</label><input class="form-control" id="cf-tel" value="${escHtml(c.tel)}" placeholder="(22) 99999-9999"></div></div>
+    <div class="form-group"><label class="form-label">E-mail</label><input class="form-control" id="cf-email" value="${escHtml(c.email)}" type="email"></div>
+    <div class="form-group"><label class="form-label">Endereço</label><input class="form-control" id="cf-end" value="${escHtml(c.endereco)}"></div>
+    <div class="form-group"><label class="form-label">Notas</label><textarea class="form-control" id="cf-notas" rows="3">${escHtml(c.notas)}</textarea></div>`,
+  `<button class="btn" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="saveCliente('${id||''}')">Salvar</button>`));
+}
+function saveCliente(id) {
+  const obj = { id:id||uid(), nome:document.getElementById('cf-nome').value.trim(), tipo:document.getElementById('cf-tipo').value, cpfcnpj:document.getElementById('cf-doc').value.trim(), email:document.getElementById('cf-email').value.trim(), tel:document.getElementById('cf-tel').value.trim(), endereco:document.getElementById('cf-end').value.trim(), notas:document.getElementById('cf-notas').value.trim(), criado:id?(DB.clientes.find(x=>x.id===id)||{}).criado||today():today() };
+  if (!obj.nome) return alert('Nome é obrigatório.');
+  if (id) { const i = DB.clientes.findIndex(x=>x.id===id); if(i>=0) DB.clientes[i]=obj; } else DB.clientes.push(obj);
+  saveDB(); closeModal(); render();
+}
+
+// AGENDA
+function modalAgenda(id) {
+  const e = id ? DB.agenda.find(x=>x.id===id) : {id:'',titulo:'',processo:'',data:today(),hora:'09:00',tipo:'Audiência',local:'',notas:''};
+  showModal(buildModal(id?'Editar evento':'Novo evento', `
+    <div class="form-group"><label class="form-label">Título *</label><input class="form-control" id="af-tit" value="${escHtml(e.titulo)}"></div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Data</label><input class="form-control" type="date" id="af-dat" value="${e.data}"></div><div class="form-group"><label class="form-label">Hora</label><input class="form-control" type="time" id="af-hor" value="${e.hora}"></div></div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Tipo</label><select class="form-control" id="af-tipo"><option>Audiência</option><option ${e.tipo==='Reunião Cliente'?'selected':''}>Reunião Cliente</option><option ${e.tipo==='Protocolo'?'selected':''}>Protocolo</option><option ${e.tipo==='Diligência'?'selected':''}>Diligência</option><option ${e.tipo==='Outro'?'selected':''}>Outro</option></select></div><div class="form-group"><label class="form-label">Local</label><input class="form-control" id="af-loc" value="${escHtml(e.local)}"></div></div>
+    <div class="form-group"><label class="form-label">Número do processo</label><input class="form-control" id="af-proc" value="${escHtml(e.processo)}" placeholder="0000000-00.0000.0.00.0000 (opcional)"></div>
+    <div class="form-group"><label class="form-label">Notas</label><textarea class="form-control" id="af-notas" rows="2">${escHtml(e.notas)}</textarea></div>`,
+  `<button class="btn" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="saveAgenda('${id||''}')">Salvar</button>`));
+}
+function saveAgenda(id) {
+  const obj = { id:id||uid(), titulo:document.getElementById('af-tit').value.trim(), processo:document.getElementById('af-proc').value.trim(), data:document.getElementById('af-dat').value, hora:document.getElementById('af-hor').value, tipo:document.getElementById('af-tipo').value, local:document.getElementById('af-loc').value.trim(), notas:document.getElementById('af-notas').value.trim(), criado:id?(DB.agenda.find(x=>x.id===id)||{}).criado||today():today() };
+  if (!obj.titulo) return alert('Título é obrigatório.');
+  if (id) { const i = DB.agenda.findIndex(x=>x.id===id); if(i>=0) DB.agenda[i]=obj; } else DB.agenda.push(obj);
+  saveDB(); closeModal(); render();
+}
+
+// PRAZO
+function modalPrazo(id) {
+  const p = id ? DB.prazos.find(x=>x.id===id) : {id:'',titulo:'',processo:'',data:'',hora:'17:00',tipo:'Prazo Processual',prioridade:'Média',status:'Pendente',notas:''};
+  showModal(buildModal(id?'Editar prazo':'Novo prazo', `
+    <div class="form-group"><label class="form-label">Título *</label><input class="form-control" id="rf-tit" value="${escHtml(p.titulo)}"></div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Data fatal *</label><input class="form-control" type="date" id="rf-dat" value="${p.data}"></div><div class="form-group"><label class="form-label">Hora limite</label><input class="form-control" type="time" id="rf-hor" value="${p.hora}"></div></div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Tipo</label><select class="form-control" id="rf-tipo"><option ${p.tipo==='Prazo Processual'?'selected':''}>Prazo Processual</option><option ${p.tipo==='Recurso'?'selected':''}>Recurso</option><option ${p.tipo==='Contestação'?'selected':''}>Contestação</option><option ${p.tipo==='Manifestação'?'selected':''}>Manifestação</option><option ${p.tipo==='Protocolo'?'selected':''}>Protocolo</option><option ${p.tipo==='Diligência'?'selected':''}>Diligência</option></select></div><div class="form-group"><label class="form-label">Prioridade</label><select class="form-control" id="rf-pri"><option ${p.prioridade==='Alta'?'selected':''}>Alta</option><option ${p.prioridade==='Média'?'selected':''}>Média</option><option ${p.prioridade==='Baixa'?'selected':''}>Baixa</option></select></div></div>
+    <div class="form-group"><label class="form-label">Número do processo</label><input class="form-control" id="rf-proc" value="${escHtml(p.processo)}" placeholder="0000000-00.0000.0.00.0000"></div>
+    <div class="form-group"><label class="form-label">Notas</label><textarea class="form-control" id="rf-notas" rows="2">${escHtml(p.notas)}</textarea></div>`,
+  `<button class="btn" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="savePrazo('${id||''}')">Salvar</button>`));
+}
+function savePrazo(id) {
+  const obj = { id:id||uid(), titulo:document.getElementById('rf-tit').value.trim(), processo:document.getElementById('rf-proc').value.trim(), data:document.getElementById('rf-dat').value, hora:document.getElementById('rf-hor').value, tipo:document.getElementById('rf-tipo').value, prioridade:document.getElementById('rf-pri').value, status:id?(DB.prazos.find(x=>x.id===id)||{}).status||'Pendente':'Pendente', notas:document.getElementById('rf-notas').value.trim(), criado:id?(DB.prazos.find(x=>x.id===id)||{}).criado||today():today() };
+  if (!obj.titulo || !obj.data) return alert('Título e data são obrigatórios.');
+  if (id) { const i = DB.prazos.findIndex(x=>x.id===id); if(i>=0) DB.prazos[i]=obj; } else DB.prazos.push(obj);
+  saveDB(); closeModal(); render(); updateBadges();
+}
+
+// TAREFA
+function modalTarefa(id) {
+  const t = id ? DB.tarefas.find(x=>x.id===id) : {id:'',titulo:'',processo:'',prazo:'',prioridade:'Média',status:'Pendente',responsavel:'Dr. Antonio',notas:''};
+  showModal(buildModal(id?'Editar tarefa':'Nova tarefa', `
+    <div class="form-group"><label class="form-label">Título *</label><input class="form-control" id="tf-tit" value="${escHtml(t.titulo)}"></div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Prazo</label><input class="form-control" type="date" id="tf-pra" value="${t.prazo}"></div><div class="form-group"><label class="form-label">Prioridade</label><select class="form-control" id="tf-pri"><option ${t.prioridade==='Alta'?'selected':''}>Alta</option><option ${t.prioridade==='Média'?'selected':''}>Média</option><option ${t.prioridade==='Baixa'?'selected':''}>Baixa</option></select></div></div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Status</label><select class="form-control" id="tf-sta"><option ${t.status==='Pendente'?'selected':''}>Pendente</option><option ${t.status==='Em andamento'?'selected':''}>Em andamento</option><option ${t.status==='Concluída'?'selected':''}>Concluída</option></select></div><div class="form-group"><label class="form-label">Responsável</label><input class="form-control" id="tf-resp" value="${escHtml(t.responsavel)}"></div></div>
+    <div class="form-group"><label class="form-label">Processo (opcional)</label><input class="form-control" id="tf-proc" value="${escHtml(t.processo)}" placeholder="Número CNJ"></div>
+    <div class="form-group"><label class="form-label">Notas</label><textarea class="form-control" id="tf-notas" rows="2">${escHtml(t.notas)}</textarea></div>`,
+  `<button class="btn" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="saveTarefa('${id||''}')">Salvar</button>`));
+}
+function saveTarefa(id) {
+  const obj = { id:id||uid(), titulo:document.getElementById('tf-tit').value.trim(), processo:document.getElementById('tf-proc').value.trim(), prazo:document.getElementById('tf-pra').value, prioridade:document.getElementById('tf-pri').value, status:document.getElementById('tf-sta').value, responsavel:document.getElementById('tf-resp').value.trim(), notas:document.getElementById('tf-notas').value.trim(), criado:id?(DB.tarefas.find(x=>x.id===id)||{}).criado||today():today() };
+  if (!obj.titulo) return alert('Título é obrigatório.');
+  if (id) { const i = DB.tarefas.findIndex(x=>x.id===id); if(i>=0) DB.tarefas[i]=obj; } else DB.tarefas.push(obj);
+  saveDB(); closeModal(); render(); updateBadges();
+}
+
+// FINANCEIRO
+function modalFinanceiro(id) {
+  const f = id ? DB.financeiro.find(x=>x.id===id) : {id:'',tipo:'Receita',descricao:'',valor:0,data:today(),processo:'',cliente:'',status:'Pendente'};
+  const clOpts = DB.clientes.map(c=>`<option value="${escHtml(c.nome)}" ${f.cliente===c.nome?'selected':''}>${escHtml(c.nome)}</option>`).join('');
+  showModal(buildModal(id?'Editar lançamento':'Novo lançamento', `
+    <div class="form-row"><div class="form-group"><label class="form-label">Tipo</label><select class="form-control" id="ff-tipo"><option ${f.tipo==='Receita'?'selected':''}>Receita</option><option ${f.tipo==='Despesa'?'selected':''}>Despesa</option></select></div><div class="form-group"><label class="form-label">Status</label><select class="form-control" id="ff-sta"><option ${f.status==='Pendente'?'selected':''}>Pendente</option><option ${f.status==='Recebido'?'selected':''}>Recebido</option><option ${f.status==='Pago'?'selected':''}>Pago</option><option ${f.status==='Cancelado'?'selected':''}>Cancelado</option></select></div></div>
+    <div class="form-group"><label class="form-label">Descrição *</label><input class="form-control" id="ff-des" value="${escHtml(f.descricao)}"></div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Valor (R$) *</label><input class="form-control" type="number" id="ff-val" value="${f.valor||0}" min="0" step="0.01"></div><div class="form-group"><label class="form-label">Data</label><input class="form-control" type="date" id="ff-dat" value="${f.data}"></div></div>
+    <div class="form-row"><div class="form-group"><label class="form-label">Cliente</label><select class="form-control" id="ff-cli"><option value="">— nenhum —</option>${clOpts}</select></div><div class="form-group"><label class="form-label">Processo (opcional)</label><input class="form-control" id="ff-proc" value="${escHtml(f.processo)}"></div></div>`,
+  `<button class="btn" onclick="closeModal()">Cancelar</button><button class="btn btn-primary" onclick="saveFinanceiro('${id||''}')">Salvar</button>`));
+}
+function saveFinanceiro(id) {
+  const obj = { id:id||uid(), tipo:document.getElementById('ff-tipo').value, descricao:document.getElementById('ff-des').value.trim(), valor:parseFloat(document.getElementById('ff-val').value)||0, data:document.getElementById('ff-dat').value, processo:document.getElementById('ff-proc').value.trim(), cliente:document.getElementById('ff-cli').value, status:document.getElementById('ff-sta').value, criado:id?(DB.financeiro.find(x=>x.id===id)||{}).criado||today():today() };
+  if (!obj.descricao) return alert('Descrição é obrigatória.');
+  if (id) { const i = DB.financeiro.findIndex(x=>x.id===id); if(i>=0) DB.financeiro[i]=obj; } else DB.financeiro.push(obj);
+  saveDB(); closeModal(); render();
+}
+
+// ══════════════════════════════════════════
+// CRUD HELPERS
+// ══════════════════════════════════════════
+function delItem(coll, id) {
+  if (!confirm('Confirmar exclusão?')) return;
+  DB[coll] = DB[coll].filter(x => x.id !== id);
+  saveDB(); render(); updateBadges();
+}
+function concludeItem(coll, id) {
+  const item = DB[coll].find(x => x.id === id);
+  if (item) { item.status = coll === 'prazos' ? 'Concluído' : 'Concluída'; saveDB(); render(); updateBadges(); }
+}
+
+// ══════════════════════════════════════════
+// EXPORT / IMPORT
+// ══════════════════════════════════════════
+function exportarDados() {
+  const blob = new Blob([JSON.stringify(DB, null, 2)], {type: 'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `lexoffice-backup-${today()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+function importarDados() { document.getElementById('file-import').click(); }
+function handleImport(e) {
+  const file = e.target.files[0];
+  if (!file) return;
+  const reader = new FileReader();
+  reader.onload = ev => {
+    try {
+      const data = JSON.parse(ev.target.result);
+      if (!data.processos) return alert('Arquivo inválido.');
+      if (!confirm(`Importar base com ${data.processos.length} processos, ${data.clientes?.length||0} clientes? Os dados atuais serão substituídos.`)) return;
+      DB = data;
+      saveDB(); render(); updateBadges();
+      alert('Dados importados com sucesso!');
+    } catch(err) { alert('Erro ao importar: ' + err.message); }
+  };
+  reader.readAsText(file);
+  e.target.value = '';
+}
+
+// ══════════════════════════════════════════
+// INIT
+// ══════════════════════════════════════════
+navigate('dashboard');
+updateDriveUI();
+setDriveStatus('Clique em "Conectar Google Drive"', 'auth');
+
+// Inicializa GIS assim que a biblioteca carregar
+window.addEventListener('load', () => { setTimeout(initGIS, 500); });
+
+// Responsive
+if (window.innerWidth <= 768) {
+  document.getElementById('menu-toggle').style.display = 'flex';
+}
+</script>
+</body>
+</html>
